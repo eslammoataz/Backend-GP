@@ -87,11 +87,8 @@ if (app.Environment.IsDevelopment())
 
 app.UseHttpsRedirection();
 app.UseCors();
-
-//app.Map("/api/customer", specificPathApp =>
-//{
-//    specificPathApp.UseMiddleware<AuthMiddleware>();
-//});
+app.UseAuthentication();
+app.UseAuthorization();
 
 
 /* 
@@ -108,7 +105,6 @@ and selects the best match based on the request.
 
 https://learn.microsoft.com/en-us/aspnet/core/fundamentals/routing?view=aspnetcore-8.0
  */
-app.UseRouting();
 
 //app.MapWhen(context => context.Request.Path.StartsWithSegments("/api/customer"), specificPathApp =>
 //{
@@ -118,7 +114,7 @@ app.UseRouting();
 
 app.Map("/api/customer", customerApp =>
 {
-
+    customerApp.UseRouting();
     customerApp.UseMiddleware<AuthMiddleware>();
 
     customerApp.UseEndpoints(endpoints =>
@@ -127,13 +123,6 @@ app.Map("/api/customer", customerApp =>
     });
 
 });
-
-
-
-//app.UseMiddleware<AuthMiddleware>();
-
-app.UseAuthentication();
-app.UseAuthorization();
 
 app.MapControllers();
 app.Run();
