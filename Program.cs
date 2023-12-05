@@ -4,6 +4,7 @@ using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting.Server;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
 using WebApplication1;
@@ -63,6 +64,16 @@ builder.Services.AddCors(options =>
         });
 });
 
+//Registering Identity 
+
+builder.Services.AddDbContext<ApplicationDbContext>();
+
+builder.Services.AddIdentity<IdentityUser, IdentityRole>()
+    .AddEntityFrameworkStores<ApplicationDbContext>()
+    .AddDefaultTokenProviders();
+
+//End of Identity 
+
 // Add services to the container.
 builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
@@ -74,7 +85,7 @@ builder.Services.AddSwaggerGen();
 //    options.UseMySql(connectionString, ServerVersion.AutoDetect(connectionString))
 //);
 
-builder.Services.AddDbContext<AppDbContext>();
+//builder.Services.AddDbContext<AppDbContext>();
 
 var app = builder.Build();
 
@@ -105,12 +116,6 @@ and selects the best match based on the request.
 
 https://learn.microsoft.com/en-us/aspnet/core/fundamentals/routing?view=aspnetcore-8.0
  */
-
-//app.MapWhen(context => context.Request.Path.StartsWithSegments("/api/customer"), specificPathApp =>
-//{
-//    specificPathApp.UseMiddleware<AuthMiddleware>();
-//    // Other middleware specific to /api/customer
-//});
 
 app.Map("/api/customer", customerApp =>
 {

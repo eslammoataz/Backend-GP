@@ -1,0 +1,50 @@
+﻿using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore;
+
+namespace WebApplication1.Data
+{
+    public class ApplicationDbContext : IdentityDbContext<IdentityUser>
+    {
+
+        protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
+        {
+            var config = new ConfigurationBuilder().AddJsonFile("appsettings.json")
+                .Build();
+
+            var connectionString = config.GetSection("constr").Value;
+
+            base.OnConfiguring(optionsBuilder);
+
+
+            optionsBuilder.UseMySql(connectionString, ServerVersion.AutoDetect(connectionString));
+        }
+
+        protected override void OnModelCreating(ModelBuilder builder)
+        {
+            base.OnModelCreating(builder);
+
+            builder.Entity<IdentityUser>().ToTable("User");
+            builder.Entity<IdentityRole>().ToTable("Role");
+            builder.Entity<IdentityUserRole<string>>().ToTable("User_Role");
+            builder.Entity<IdentityUserClaim<string>>().ToTable("User_Claim");
+            builder.Entity<IdentityUserLogin<string>>().ToTable("User_Login");
+
+            builder.Entity<IdentityRoleClaim<string>>().ToTable("Role_Claims");
+            builder.Entity<IdentityUserToken<string>>().ToTable("User_Tokens");
+
+            SeedRoles(builder);
+
+        }
+
+        private static void SeedRoles(ModelBuilder builder)
+        {
+            builder.Entity<IdentityRole>().HasData(
+                new IdentityRole() { Name = "Admin", ConcurrencyStamp = "1", NormalizedName = "ADMIN" },
+                new IdentityRole() { Name = "User", ConcurrencyStamp = "2", NormalizedName = "USER" }
+                );
+
+        }
+
+    }
+}
