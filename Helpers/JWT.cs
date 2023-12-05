@@ -8,17 +8,11 @@ namespace WebApplication1.Helpers
     public class JWT
     {
 
-        public static string generateToken(string userId, IConfiguration config)
+        public static string generateToken(List<Claim>claims, IConfiguration config)
         {
             // If registration is successful, proceed to generate token
             var secretKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(config["Jwt:Key"]));
             var credentials = new SigningCredentials(secretKey, SecurityAlgorithms.HmacSha256);
-
-            var claims = new[]
-            {
-                  new Claim("userId", userId)
-
-            };
 
             var tokenOptions = new JwtSecurityToken(
                 issuer: "https://localhost:44309/",

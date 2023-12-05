@@ -63,8 +63,14 @@ namespace WebApplication1.Controllers
             if (!result.Succeeded)
                 return BadRequest(new { Result_Error = result.Errors, Response = new Response { Status = "Error", Message = "User Registeration Failed" } });
 
+            List<Claim> claims = new()
+            {
+                  new Claim("userId", user.Id)
 
-            var tokenString = JWT.generateToken(user.Id.ToString(), config);
+            };
+
+            var tokenString = JWT.generateToken(claims, config);
+
             Response.Cookies.Append("Auth", tokenString, new CookieOptions
             {
                 HttpOnly = true,
@@ -78,40 +84,41 @@ namespace WebApplication1.Controllers
             return Ok(new Response { Status = "Success", Message = "User Registered Successfully" });
         }
 
+
         [HttpPost]
         [Route("login")]
-        public async Task<IActionResult> loginAsync(LoginRequestDto loginRequest)
+        public async Task<IActionResult> login(LoginRequestDto loginRequest)
         {
             var user = await userManager.FindByEmailAsync(loginRequest.email);
+            var isValidPassword = await userManager.CheckPasswordAsync(user, loginRequest.password);
 
-            if (user == null)
+            if (user == null || !isValidPassword)
             {
                 return NotFound(new Response { Status = "Error", Message = "Invalid credentials" });
             }
 
-            var isValidPassword = await userManager.CheckPasswordAsync(user, loginRequest.password);
-
-
-            if (isValidPassword)
+            List<Claim> claims = new()
             {
-                var tokenString = JWT.generateToken(user.Id.ToString(), config);
+                  new Claim("userId", user.Id)
 
-                // Set the token in the response header
-                Response.Headers.Add("Authorization", "Bearer " + tokenString);
+            };
 
-                // Set the token in a cookie
-                Response.Cookies.Append("Auth", tokenString, new CookieOptions
-                {
-                    HttpOnly = true,
-                    Secure = true, // Use "true" in production to ensure the cookie is only sent over HTTPS
-                    SameSite = SameSiteMode.Strict,
-                    Expires = DateTime.Now.AddMinutes(120) // Set the cookie expiration time
-                });
+            var tokenString = JWT.generateToken(claims, config);
 
-                return Ok(new Response { Status = "Success", Message = "User logged in Successfully" });
-            }
+            // Set the token in the response header
+            Response.Headers.Add("Authorization", "Bearer " + tokenString);
 
-            return Unauthorized("Invalid credentials");
+            // Set the token in a cookie
+            Response.Cookies.Append("Auth", tokenString, new CookieOptions
+            {
+                HttpOnly = true,
+                Secure = true, // Use "true" in production to ensure the cookie is only sent over HTTPS
+                SameSite = SameSiteMode.Strict,
+                Expires = DateTime.Now.AddMinutes(120) // Set the cookie expiration time
+            });
+
+            return Ok(new Response { Status = "Success", Message = "User logged in Successfully" });
+
         }
     }
 }
