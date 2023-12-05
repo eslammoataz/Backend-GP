@@ -24,11 +24,11 @@ namespace WebApplication1.Data
         {
             base.OnModelCreating(builder);
 
-            builder.Entity<IdentityUser>().ToTable("User");
-            builder.Entity<IdentityRole>().ToTable("Role");
+            builder.Entity<IdentityUser>().ToTable("Users");
+            builder.Entity<IdentityRole>().ToTable("Roles");
             builder.Entity<IdentityUserRole<string>>().ToTable("User_Role");
-            builder.Entity<IdentityUserClaim<string>>().ToTable("User_Claim");
-            builder.Entity<IdentityUserLogin<string>>().ToTable("User_Login");
+            builder.Entity<IdentityUserClaim<string>>().ToTable("User_Claims");
+            builder.Entity<IdentityUserLogin<string>>().ToTable("User_Logins");
 
             builder.Entity<IdentityRoleClaim<string>>().ToTable("Role_Claims");
             builder.Entity<IdentityUserToken<string>>().ToTable("User_Tokens");

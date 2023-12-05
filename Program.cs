@@ -117,17 +117,17 @@ and selects the best match based on the request.
 https://learn.microsoft.com/en-us/aspnet/core/fundamentals/routing?view=aspnetcore-8.0
  */
 
-app.Map("/api/customer", customerApp =>
-{
-    customerApp.UseRouting();
-    customerApp.UseMiddleware<AuthMiddleware>();
+//app.Map("/api/customer", customerApp =>
+//{
+//    customerApp.UseRouting();
+//    customerApp.UseMiddleware<AuthMiddleware>();
 
-    customerApp.UseEndpoints(endpoints =>
-    {
-        endpoints.MapControllers();
-    });
+//    customerApp.UseEndpoints(endpoints =>
+//    {
+//        endpoints.MapControllers();
+//    });
 
-});
+//});
 
 app.MapControllers();
 app.Run();

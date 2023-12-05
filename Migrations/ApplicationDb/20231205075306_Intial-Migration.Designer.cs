@@ -11,8 +11,8 @@ using WebApplication1.Data;
 namespace WebApplication1.Migrations.ApplicationDb
 {
     [DbContext(typeof(ApplicationDbContext))]
-    [Migration("20231205072249_Seeding_Roles")]
-    partial class Seeding_Roles
+    [Migration("20231205075306_Intial-Migration")]
+    partial class IntialMigration
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -45,19 +45,19 @@ namespace WebApplication1.Migrations.ApplicationDb
                         .IsUnique()
                         .HasDatabaseName("RoleNameIndex");
 
-                    b.ToTable("Role", (string)null);
+                    b.ToTable("Roles", (string)null);
 
                     b.HasData(
                         new
                         {
-                            Id = "3240450b-4fae-4b01-813d-64af5bf70d60",
+                            Id = "bc27b0d5-fc0a-4745-8a6f-87dccd1c9939",
                             ConcurrencyStamp = "1",
                             Name = "Admin",
                             NormalizedName = "ADMIN"
                         },
                         new
                         {
-                            Id = "2e278e6c-1c65-4374-a3ae-0703a2029caa",
+                            Id = "64218e7c-6eca-44e2-ba2f-112044670e9f",
                             ConcurrencyStamp = "2",
                             Name = "User",
                             NormalizedName = "USER"
@@ -148,7 +148,7 @@ namespace WebApplication1.Migrations.ApplicationDb
                         .IsUnique()
                         .HasDatabaseName("UserNameIndex");
 
-                    b.ToTable("User", (string)null);
+                    b.ToTable("Users", (string)null);
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityUserClaim<string>", b =>
@@ -171,7 +171,7 @@ namespace WebApplication1.Migrations.ApplicationDb
 
                     b.HasIndex("UserId");
 
-                    b.ToTable("User_Claim", (string)null);
+                    b.ToTable("User_Claims", (string)null);
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityUserLogin<string>", b =>
@@ -193,7 +193,7 @@ namespace WebApplication1.Migrations.ApplicationDb
 
                     b.HasIndex("UserId");
 
-                    b.ToTable("User_Login", (string)null);
+                    b.ToTable("User_Logins", (string)null);
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityUserRole<string>", b =>
