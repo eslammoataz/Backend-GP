@@ -7,18 +7,12 @@ namespace WebApplication1.Data
     public class ApplicationDbContext : IdentityDbContext<IdentityUser>
     {
 
-        protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
+        public ApplicationDbContext(DbContextOptions<ApplicationDbContext> options) : base(options)
         {
-            var config = new ConfigurationBuilder().AddJsonFile("appsettings.json")
-                .Build();
-
-            var connectionString = config.GetSection("constr").Value;
-
-            base.OnConfiguring(optionsBuilder);
-
-
-            optionsBuilder.UseMySql(connectionString, ServerVersion.AutoDetect(connectionString));
         }
+
+
+
 
         protected override void OnModelCreating(ModelBuilder builder)
         {

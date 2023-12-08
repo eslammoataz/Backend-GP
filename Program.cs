@@ -1,23 +1,15 @@
-using System.Text;
-using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authentication.Cookies;
-using Microsoft.AspNetCore.Authentication.JwtBearer;
-using Microsoft.AspNetCore.Builder;
-using Microsoft.AspNetCore.Hosting.Server;
+using Microsoft.AspNetCore.Builder.Extensions;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.IdentityModel.Tokens;
-using WebApplication1;
-using WebApplication1.Controllers;
 using WebApplication1.Data;
-using WebApplication1.Middlewares;
-
+using WebApplication1.Models;
+using WebApplication1.Services;
+using WebApplication1.ServicesWebApplication1.Services;
 
 var builder = WebApplication.CreateBuilder(args);
 
-//Jwt configuration starts here
-var jwtIssuer = builder.Configuration.GetSection("Jwt:Issuer").Get<string>();
-var jwtKey = builder.Configuration.GetSection("Jwt:Key").Get<string>();
+
 builder.Logging.AddConsole();
 
 //builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
@@ -64,9 +56,23 @@ builder.Services.AddCors(options =>
         });
 });
 
-//Registering Identity 
 
-builder.Services.AddDbContext<ApplicationDbContext>();
+//Registering Identity 
+var Configuration = builder.Configuration;
+
+builder.Services.AddSingleton(Configuration);
+
+var connectionString = Configuration.GetSection("constr").Value;
+
+builder.Services.AddDbContext<ApplicationDbContext>(options =>
+    options.UseMySql(connectionString, ServerVersion.AutoDetect(connectionString))
+);
+
+
+
+
+builder.Services.AddScoped<IEmailService, EmailService>();
+
 
 builder.Services.AddIdentity<IdentityUser, IdentityRole>()
     .AddEntityFrameworkStores<ApplicationDbContext>()
@@ -74,18 +80,13 @@ builder.Services.AddIdentity<IdentityUser, IdentityRole>()
 
 //End of Identity 
 
+
+
 // Add services to the container.
 builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
-
-//// Add DbContext to the services
-//builder.Services.AddDbContext<AppDbContext>(options =>
-//    options.UseMySql(connectionString, ServerVersion.AutoDetect(connectionString))
-//);
-
-//builder.Services.AddDbContext<AppDbContext>();
 
 var app = builder.Build();
 
@@ -102,20 +103,7 @@ app.UseAuthentication();
 app.UseAuthorization();
 
 
-/* 
-The UseRouting method in ASP.NET Core is part of the middleware pipeline
-and is responsible for setting up the routing system.
-It plays a crucial role in handling incoming HTTP requests
-and determining which endpoint should be executed based on the request's route.
-*/
-
-/*
- -From Microsoft Docs
-UseRouting adds route matching to the middleware pipeline. This middleware looks at the set of endpoints defined in the app,
-and selects the best match based on the request.
-
-https://learn.microsoft.com/en-us/aspnet/core/fundamentals/routing?view=aspnetcore-8.0
- */
+//to register middlewares
 
 //app.Map("/api/customer", customerApp =>
 //{

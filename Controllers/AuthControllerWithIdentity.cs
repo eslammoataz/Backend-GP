@@ -1,13 +1,18 @@
 ﻿using System;
 using System.IdentityModel.Tokens.Jwt;
+using System.Net.Mail;
 using System.Security.Claims;
 using System.Text;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.IdentityModel.Tokens;
+using MimeKit;
+using MimeKit.Text;
 using WebApplication1.Data;
 using WebApplication1.Helpers;
 using WebApplication1.Models;
+using MailKit.Net.Smtp;
+using WebApplication1.Services;
 
 namespace WebApplication1.Controllers
 {
@@ -18,15 +23,17 @@ namespace WebApplication1.Controllers
         private readonly ApplicationDbContext context;
         private readonly IConfiguration config;
         private readonly UserManager<IdentityUser> userManager;
+        private readonly IEmailService emailService;
         private readonly RoleManager<IdentityRole> roleManager;
 
-        public AuthControllerWithIdentity(ApplicationDbContext _context, IConfiguration config,
-            RoleManager<IdentityRole> roleManager, UserManager<IdentityUser> userManager)
+        public AuthControllerWithIdentity(ApplicationDbContext _context, IConfiguration _config,
+            RoleManager<IdentityRole> _roleManager, UserManager<IdentityUser> _userManager, IEmailService _emailService)
         {
             context = _context;
-            this.config = config;
-            this.roleManager = roleManager;
-            this.userManager = userManager;
+            config = _config;
+            roleManager = _roleManager;
+            userManager = _userManager;
+            emailService = _emailService;
         }
 
 
@@ -120,5 +127,19 @@ namespace WebApplication1.Controllers
             return Ok(new Response { Status = "Success", Message = "User logged in Successfully" });
 
         }
+
+
+        [HttpPost]
+
+        public IActionResult sendEmail(EmailDto message)
+        {
+
+            emailService.SendEmail(message);
+
+            return Ok();
+
+        }
+
+
     }
 }
