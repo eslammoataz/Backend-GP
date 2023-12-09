@@ -68,8 +68,7 @@ builder.Services.AddDbContext<ApplicationDbContext>(options =>
     options.UseMySql(connectionString, ServerVersion.AutoDetect(connectionString))
 );
 
-
-
+builder.Services.Configure<IdentityOptions>(options => options.SignIn.RequireConfirmedEmail = true);
 
 builder.Services.AddScoped<IEmailService, EmailService>();
 

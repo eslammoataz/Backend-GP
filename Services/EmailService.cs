@@ -10,9 +10,12 @@ namespace WebApplication1.ServicesWebApplication1.Services
     public class EmailService : IEmailService
     {
         private readonly IConfiguration config;
-        public EmailService(IConfiguration _config)
+        private readonly ILogger<EmailService> logger;
+
+        public EmailService(IConfiguration _config, ILogger<EmailService> logger)
         {
             config = _config;
+            this.logger = logger;
         }
 
 
@@ -22,6 +25,7 @@ namespace WebApplication1.ServicesWebApplication1.Services
             email.From.Add(MailboxAddress.Parse(config["EmailConfiguration:From"]));
             email.To.Add(MailboxAddress.Parse(message.To));
             email.Subject = message.Subject;
+
             email.Body = new TextPart(TextFormat.Html)
             {
                 Text = message.Body

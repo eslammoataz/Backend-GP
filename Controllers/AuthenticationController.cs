@@ -13,27 +13,31 @@ using WebApplication1.Helpers;
 using WebApplication1.Models;
 using MailKit.Net.Smtp;
 using WebApplication1.Services;
+using Microsoft.AspNetCore.WebUtilities;
 
 namespace WebApplication1.Controllers
 {
     [ApiController]
-    [Route("api/newauth")]
-    public class AuthControllerWithIdentity : ControllerBase
+    [Route("api/auth")]
+    public class AuthenticationController : ControllerBase
     {
         private readonly ApplicationDbContext context;
         private readonly IConfiguration config;
         private readonly UserManager<IdentityUser> userManager;
         private readonly IEmailService emailService;
+        private readonly ILogger<AuthenticationController> logger;
         private readonly RoleManager<IdentityRole> roleManager;
 
-        public AuthControllerWithIdentity(ApplicationDbContext _context, IConfiguration _config,
-            RoleManager<IdentityRole> _roleManager, UserManager<IdentityUser> _userManager, IEmailService _emailService)
+        public AuthenticationController(ApplicationDbContext _context, IConfiguration _config,
+            RoleManager<IdentityRole> _roleManager, UserManager<IdentityUser> _userManager, IEmailService _emailService,
+            ILogger<AuthenticationController> logger)
         {
             context = _context;
             config = _config;
             roleManager = _roleManager;
             userManager = _userManager;
             emailService = _emailService;
+            this.logger = logger;
         }
 
 
@@ -88,7 +92,32 @@ namespace WebApplication1.Controllers
 
             await userManager.AddToRoleAsync(user, role);
 
-            return Ok(new Response { Status = "Success", Message = "User Registered Successfully" });
+            //Add Token to Verify the email....
+            var token = await userManager.GenerateEmailConfirmationTokenAsync(user);
+            var confirmationLink = Url.Action(nameof(ConfirmEmail), "Authentication", new { token, email = user.Email }, Request.Scheme);
+            var message = new EmailDto(user.Email!, "Sarvicny: Confirmation email link", "Sarvicny Account Confirmation Link : " + confirmationLink!);
+
+            emailService.SendEmail(message);
+
+
+            return Ok(new Response { Status = "Success", Message = $"User Registered Successfully , Verification Email sent to {user.Email}" });
+        }
+
+        [HttpGet("ConfirmEmail")]
+        public async Task<IActionResult> ConfirmEmail(string token, string email)
+        {
+            var user = await userManager.FindByEmailAsync(email);
+            if (user != null)
+            {
+                var result = await userManager.ConfirmEmailAsync(user, token);
+                if (result.Succeeded)
+                {
+                    return StatusCode(StatusCodes.Status200OK,
+                      new Response { Status = "Success", Message = "Email Verified Successfully" });
+                }
+            }
+            return StatusCode(StatusCodes.Status500InternalServerError,
+                       new Response { Status = "Error", Message = "This User Doesnot exist!" });
         }
 
 
@@ -129,16 +158,16 @@ namespace WebApplication1.Controllers
         }
 
 
-        [HttpPost]
+        //[HttpPost]
 
-        public IActionResult sendEmail(EmailDto message)
-        {
+        //public IActionResult sendEmail(EmailDto message)
+        //{
 
-            emailService.SendEmail(message);
+        //    emailService.SendEmail(message);
 
-            return Ok();
+        //    return Ok();
 
-        }
+        //}
 
 
     }
