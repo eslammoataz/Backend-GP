@@ -2,6 +2,7 @@
 using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using WebApplication1.Data;
 
@@ -10,9 +11,11 @@ using WebApplication1.Data;
 namespace WebApplication1.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    partial class AppDbContextModelSnapshot : ModelSnapshot
+    [Migration("20231212202449_intial_migration")]
+    partial class intial_migration
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -47,14 +50,14 @@ namespace WebApplication1.Migrations
                     b.HasData(
                         new
                         {
-                            Id = "49fc6b32-a3ef-47d9-b45a-5cd5b03bf3f7",
+                            Id = "a734193a-30aa-4e77-9076-bc5df5801efe",
                             ConcurrencyStamp = "1",
                             Name = "Admin",
                             NormalizedName = "ADMIN"
                         },
                         new
                         {
-                            Id = "54ceb25a-aa61-4e8d-9796-3a1df5c67c0d",
+                            Id = "61868c39-5105-4626-9627-adea75f304ce",
                             ConcurrencyStamp = "2",
                             Name = "User",
                             NormalizedName = "USER"
@@ -244,19 +247,17 @@ namespace WebApplication1.Migrations
                     b.HasData(
                         new
                         {
-                            Id = "1",
+                            Id = "4391ce53-c0e2-4c48-9768-636850006502",
                             AccessFailedCount = 0,
-                            ConcurrencyStamp = "8ae46922-08c0-43b4-ad5f-768dd9577c20",
-                            Email = "admin@example.com",
-                            EmailConfirmed = true,
+                            ConcurrencyStamp = "08b7fa5f-e2f5-451b-b18c-cf2c5d69bcc3",
+                            Email = "admin@admin.com",
+                            EmailConfirmed = false,
                             LockoutEnabled = false,
-                            NormalizedEmail = "ADMIN@EXAMPLE.COM",
-                            NormalizedUserName = "ADMIN@EXAMPLE.COM",
-                            PasswordHash = "YourHashedPassword",
+                            PasswordHash = "admin",
                             PhoneNumberConfirmed = false,
-                            SecurityStamp = "",
+                            SecurityStamp = "47983c83-8f16-4f94-b874-1f41d73c007c",
                             TwoFactorEnabled = false,
-                            UserName = "admin@example.com"
+                            UserName = "admin"
                         });
                 });
 

@@ -64,7 +64,7 @@ builder.Services.AddSingleton(Configuration);
 
 var connectionString = Configuration.GetSection("constr").Value;
 
-builder.Services.AddDbContext<ApplicationDbContext>(options =>
+builder.Services.AddDbContext<AppDbContext>(options =>
     options.UseMySql(connectionString, ServerVersion.AutoDetect(connectionString))
 );
 
@@ -73,12 +73,12 @@ builder.Services.Configure<IdentityOptions>(options => options.SignIn.RequireCon
 builder.Services.AddScoped<IEmailService, EmailService>();
 
 
-builder.Services.AddIdentity<IdentityUser, IdentityRole>()
-    .AddEntityFrameworkStores<ApplicationDbContext>()
+builder.Services.AddIdentity<User, IdentityRole>()
+    .AddEntityFrameworkStores<AppDbContext>()
     .AddDefaultTokenProviders();
 
 //End of Identity 
-
+//Ensures that the database is created and all migrations are applied
 
 
 // Add services to the container.
@@ -88,6 +88,20 @@ builder.Services.AddSwaggerGen();
 
 
 var app = builder.Build();
+
+
+using (var scope = app.Services.CreateScope())
+{
+    var dbContext = scope.ServiceProvider.GetRequiredService<AppDbContext>();
+    dbContext.Database.EnsureCreated();
+
+    // Check if any migrations are pending
+    if (dbContext.Database.GetPendingMigrations().Any())
+    {
+        //dbContext.Database.Migrate(); // Apply pending migrations
+    }
+}
+
 
 // Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())

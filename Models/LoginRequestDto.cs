@@ -7,7 +7,7 @@ namespace WebApplication1.Data
     {
         [EmailAddress]
         [Required(ErrorMessage = "email is Required to login")]
-        public string email { get; set; }
+        public string Email { get; set; }
 
         [Required(ErrorMessage = "password is Required to login")]
         public string password { get; set; }
