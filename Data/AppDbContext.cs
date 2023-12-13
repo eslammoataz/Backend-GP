@@ -3,7 +3,8 @@ using System.Reflection.Metadata;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
-using WebApplication1.Models;
+using WebApplication1.Models.Entities.Users;
+using WebApplication1.Models.Entities.Users.ServiceProviders;
 
 namespace WebApplication1.Data
 {

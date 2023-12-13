@@ -2,7 +2,7 @@
 using MailKit.Security;
 using MimeKit;
 using MimeKit.Text;
-using WebApplication1.Models;
+using WebApplication1.Models.Emails;
 using WebApplication1.Services;
 
 namespace WebApplication1.ServicesWebApplication1.Services

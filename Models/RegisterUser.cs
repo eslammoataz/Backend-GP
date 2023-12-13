@@ -3,7 +3,7 @@ using System.ComponentModel.DataAnnotations;
 
 namespace WebApplication1.Models
 {
-    public class RegisterUser
+    public class RegisterUser  
     {
         [EmailAddress]
         [Required(ErrorMessage = "Email is Required")]

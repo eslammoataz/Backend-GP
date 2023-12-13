@@ -2,8 +2,9 @@ using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Builder.Extensions;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.OpenApi.Models;
 using WebApplication1.Data;
-using WebApplication1.Models;
+using WebApplication1.Models.Entities.Users;
 using WebApplication1.Services;
 using WebApplication1.ServicesWebApplication1.Services;
 
@@ -70,7 +71,9 @@ builder.Services.AddDbContext<AppDbContext>(options =>
 
 builder.Services.Configure<IdentityOptions>(options => options.SignIn.RequireConfirmedEmail = true);
 
+builder.Services.AddScoped<IEmailConfirmService, EmailConfirmService>();
 builder.Services.AddScoped<IEmailService, EmailService>();
+
 
 
 builder.Services.AddIdentity<User, IdentityRole>()
@@ -85,6 +88,7 @@ builder.Services.AddIdentity<User, IdentityRole>()
 builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
+
 
 
 var app = builder.Build();
@@ -108,6 +112,12 @@ if (app.Environment.IsDevelopment())
 {
     app.UseSwagger();
     app.UseSwaggerUI();
+    //app.UseSwaggerUI(c =>
+    //{
+    //    c.SwaggerEndpoint("/swagger/v1/swagger.json", "Your API V1");
+    //    // Set the Swagger UI to the application's root path
+    //    c.RoutePrefix = string.Empty;
+    //});
 }
 
 app.UseHttpsRedirection();
