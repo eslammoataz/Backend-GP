@@ -1,21 +1,26 @@
-﻿using Microsoft.AspNetCore.Identity;
+﻿using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.Abstractions;
+using Microsoft.AspNetCore.Mvc.Infrastructure;
+using Microsoft.AspNetCore.Mvc.Routing;
 using WebApplication1.Controllers.UsersControllers;
 using WebApplication1.Models.Entities.Users;
 
 namespace WebApplication1.Services
 {
-    public class EmailConfirmService:IEmailConfirmService
+    public class EmailConfirmService : IEmailConfirmService
     {
         private readonly UserManager<User> userManager;
-        private readonly IUrlHelper urlHelper;
-        private readonly IServiceProvider serviceProvider;
+        private readonly IUrlHelperFactory urlHelperFactory;
+        private readonly IServiceProvider _serviceProvider;
 
-        public EmailConfirmService(UserManager<User> userManager, IUrlHelper urlHelper, IServiceProvider serviceProvider)
+        public EmailConfirmService(UserManager<User> userManager, IUrlHelperFactory urlHelperFactory, IServiceProvider serviceProvider)
         {
             this.userManager = userManager;
-            this.urlHelper = urlHelper;
-            this.serviceProvider = serviceProvider;
+            this.urlHelperFactory = urlHelperFactory;
+            _serviceProvider = serviceProvider;
+
 
         }
 
@@ -30,18 +35,23 @@ namespace WebApplication1.Services
             }
             return false;
         }
-        public string GenerateConfirmationLink(User user)
+        public string GenerateConfirmationLink(string token,string email, HttpContext httpContext = null)
         {
-            var token = userManager.GenerateEmailConfirmationTokenAsync(user).Result;
-
-            using (var scope = serviceProvider.CreateScope())
+            if (httpContext == null)
             {
-                var urlHelper = scope.ServiceProvider.GetRequiredService<IUrlHelper>();
-                var confirmationLink = urlHelper.Action(nameof(ConfirmEmailController.Confirm), "EmailConfirmation", new { token, email = user.Email }, "https");
-                return confirmationLink;
+                var httpContextAccessor = _serviceProvider.GetRequiredService<IHttpContextAccessor>();
+                httpContext = httpContextAccessor.HttpContext ?? new DefaultHttpContext();
             }
 
-            
+            var urlHelperFactory = _serviceProvider.GetRequiredService<IUrlHelperFactory>();
+            var urlHelper = urlHelperFactory.GetUrlHelper(new ActionContext(httpContext, new RouteData(), new ActionDescriptor()));
+
+            var confirmationLink = urlHelper.Action(nameof(ConfirmEmailController.Confirm), "EmailConfirmation", new { token, email}, httpContext.Request.Scheme);
+
+            return confirmationLink;
         }
     }
 }
+      
+
+  

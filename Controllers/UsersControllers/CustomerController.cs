@@ -107,7 +107,7 @@ namespace WebApplication1.Controllers.UsersControllers
 
             if (isEmailConfirmed)
             {
-                var confirmationLink = emailConfirm.GenerateConfirmationLink(user);
+                var confirmationLink = emailConfirm.GenerateConfirmationLink(token,user.Email);
                 var message = new EmailDto(user.Email!, "Sarvicny: Confirmation email link", "Sarvicny Account Confirmation Link : " + confirmationLink!);
                 emailService.SendEmail(message);
                 return Ok(new Response { Status = "Success", Message = $"User Registered Successfully , Verification Email sent to {user.Email}" });

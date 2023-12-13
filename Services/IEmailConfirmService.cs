@@ -6,7 +6,7 @@ namespace WebApplication1.Services
     {
         Task<bool> ConfirmEmailAsync(string token, string email);
 
-        public string GenerateConfirmationLink(User user);
+        public string GenerateConfirmationLink(string token, string email, HttpContext httpContext = null);
 
 
     }
