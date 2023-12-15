@@ -41,7 +41,7 @@ namespace WebApplication1.Data
             builder.Entity<Admin>().ToTable("Admins");
 
             SeedRoles(builder);
-            SeedAdminData(builder);
+            //SeedAdminData(builder);
 
         }
 

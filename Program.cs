@@ -1,7 +1,10 @@
+using System;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Hosting;
 using WebApplication1.Data;
+using WebApplication1.Models;
 using WebApplication1.Models.Entities.Users;
 using WebApplication1.Services;
 using WebApplication1.Services.EmailService;
@@ -76,11 +79,7 @@ builder.Services.AddHttpContextAccessor();
 
 builder.Services.AddScoped<IEmailConfirmService, EmailConfirmService>();
 builder.Services.AddScoped<IAuthenticationService, AuthenticationService>();
-
-
 builder.Services.AddScoped<IEmailService, EmailService>();
-
-
 
 
 builder.Services.AddIdentity<User, IdentityRole>()
@@ -101,6 +100,7 @@ builder.Services.AddSwaggerGen();
 var app = builder.Build();
 
 
+
 using (var scope = app.Services.CreateScope())
 {
     var dbContext = scope.ServiceProvider.GetRequiredService<AppDbContext>();
@@ -112,6 +112,46 @@ using (var scope = app.Services.CreateScope())
         //dbContext.Database.Migrate(); // Apply pending migrations
     }
 }
+
+
+using (var scope = app.Services.CreateScope())
+{
+    var dbContext = scope.ServiceProvider.GetRequiredService<AppDbContext>();
+    dbContext.Database.EnsureCreated();
+
+    // Check if any migrations are pending
+    if (dbContext.Database.GetPendingMigrations().Any())
+    {
+        //dbContext.Database.Migrate(); // Apply pending migrations
+    }
+}
+
+
+using (var scope = app.Services.CreateScope())
+{
+    var userManager = scope.ServiceProvider.GetRequiredService<UserManager<User>>();
+    var roleManager = scope.ServiceProvider.GetRequiredService<RoleManager<IdentityRole>>();
+    var context = scope.ServiceProvider.GetRequiredService<AppDbContext>();
+
+    if (!context.Admins.Any())
+    {
+        Admin admin = new Admin
+        {
+            Id = "1",
+            UserName = "admin@example.com",
+            NormalizedUserName = "ADMIN@EXAMPLE.COM",
+            Email = "admin@example.com",
+            NormalizedEmail = "ADMIN@EXAMPLE.COM",
+            EmailConfirmed = true,
+        };
+
+        var result = await userManager.CreateAsync(admin, "Admin123#");
+    }
+
+}
+
+
+
 
 
 // Configure the HTTP request pipeline.
