@@ -1,13 +1,10 @@
 using Microsoft.AspNetCore.Authentication.Cookies;
-using Microsoft.AspNetCore.Builder.Extensions;
 using Microsoft.AspNetCore.Identity;
-using Microsoft.AspNetCore.Mvc.Routing;
-using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.OpenApi.Models;
 using WebApplication1.Data;
 using WebApplication1.Models.Entities.Users;
 using WebApplication1.Services;
+using WebApplication1.Services.EmailService;
 using WebApplication1.ServicesWebApplication1.Services;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -71,10 +68,18 @@ builder.Services.AddDbContext<AppDbContext>(options =>
     options.UseMySql(connectionString, ServerVersion.AutoDetect(connectionString))
 );
 
-builder.Services.Configure<IdentityOptions>(options => options.SignIn.RequireConfirmedEmail = true);
+
+builder.Services.Configure<IdentityOptions>(options => options.SignIn.RequireConfirmedEmail = false);
+
+builder.Services.AddHttpContextAccessor();
+
 
 builder.Services.AddScoped<IEmailConfirmService, EmailConfirmService>();
+builder.Services.AddScoped<IAuthenticationService, AuthenticationService>();
+
+
 builder.Services.AddScoped<IEmailService, EmailService>();
+
 
 
 
@@ -130,17 +135,16 @@ app.UseAuthorization();
 
 //to register middlewares
 
-//app.Map("/api/customer", customerApp =>
+//app.Map("/api/auth", customerApp =>
 //{
 //    customerApp.UseRouting();
-//    customerApp.UseMiddleware<AuthMiddleware>();
 
 //    customerApp.UseEndpoints(endpoints =>
 //    {
 //        endpoints.MapControllers();
 //    });
-
 //});
+
 
 app.MapControllers();
 app.Run();

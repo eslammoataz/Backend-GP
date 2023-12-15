@@ -13,7 +13,7 @@ using WebApplication1.Models.Entities.Users;
 using WebApplication1.Models.Requests.AuthRequests;
 using WebApplication1.Models.Requests.AuthRequestsValidations.Registers;
 using WebApplication1.Services;
-using static WebApplication1.Services.IEmailConfirmService;
+using WebApplication1.Services.EmailService;
 
 namespace WebApplication1.Controllers.UsersControllers
 {
@@ -31,11 +31,11 @@ namespace WebApplication1.Controllers.UsersControllers
         private readonly IEmailService emailService;
         private readonly RoleManager<IdentityRole> roleManager;
         private readonly IEmailConfirmService emailConfirm;
-
+        private readonly IAuthenticationService authenticationService;
 
         public CustomerController(AppDbContext _context, IConfiguration _config,
                 RoleManager<IdentityRole> _roleManager, UserManager<User> _customerManager,
-                ILogger<CustomerController> logger, IEmailService emailService, IEmailConfirmService emailConfirm)
+                ILogger<CustomerController> logger, IEmailService emailService, IEmailConfirmService emailConfirm, IAuthenticationService authenticationService)
         {
             context = _context;
             config = _config;
@@ -44,86 +44,31 @@ namespace WebApplication1.Controllers.UsersControllers
             this.logger = logger;
             this.emailService = emailService;
             this.emailConfirm = emailConfirm;
+            this.authenticationService = authenticationService;
         }
 
 
         [HttpPost]
         [Route("register")]
-        public async Task<IActionResult> register(RegisterCustomer registrationDto)
+        public async Task<IActionResult> Register(RegisterCustomer registrationDto, string role)
         {
-            logger.LogInformation(" ----- email " + registrationDto.Email);
-            var userExist = await customerManager.FindByEmailAsync(registrationDto.Email);
-
-
-            if (userExist != null)
-            {
-                return BadRequest(new Response { Status = "Error", Message = "This email is already registered" });
-
-            }
-
-
-
             var user = new Customer()
             {
                 Email = registrationDto.Email,
                 UserName = registrationDto.UserName,
-                //Password= registrationDto.Password,
                 PhoneNumber = registrationDto.PhoneNumber,
                 Address = registrationDto.Address,
                 LastName = registrationDto.LastName,
                 FirstName = registrationDto.FirstName,
             };
 
-            // it stores the password hashed already without using bcrypt
-            var result = await customerManager.CreateAsync(user, registrationDto.Password);
+            var Response = await authenticationService.Register(user, role, registrationDto.Password);
 
-            // User Registered 
-            if (!result.Succeeded)
-                return BadRequest(new { Result_Error = result.Errors, Response = new Response { Status = "Error", Message = "User Registeration Failed" } });
+            if (Response.Errors != null && Response.Errors.Count > 0)
+                return BadRequest(Response);
 
-            List<Claim> claims = new()
-            {
-                  new Claim("customerId", user.Id)
+            return Ok(Response);
 
-            };
-
-            var tokenString = JWT.generateToken(claims, config);
-
-            Response.Cookies.Append("Auth", tokenString, new CookieOptions
-            {
-                HttpOnly = true,
-                Secure = true, // Use "true" in production to ensure the cookie is only sent over HTTPS
-                SameSite = SameSiteMode.Strict,
-                Expires = DateTime.Now.AddMinutes(120) // Set the cookie expiration time
-            });
-       
-            
-               
-            //Add Token to Verify the email....
-            var token = await customerManager.GenerateEmailConfirmationTokenAsync(user);
-
-            // Assuming you have an instance of IEmailConfirmationService injected
-            var isEmailConfirmed = await emailConfirm.ConfirmEmailAsync(token, user.Email);
-
-            if (isEmailConfirmed)
-            {
-                var confirmationLink = emailConfirm.GenerateConfirmationLink(token,user.Email);
-                var message = new EmailDto(user.Email!, "Sarvicny: Confirmation email link", "Sarvicny Account Confirmation Link : " + confirmationLink!);
-                emailService.SendEmail(message);
-                return Ok(new Response { Status = "Success", Message = $"User Registered Successfully , Verification Email sent to {user.Email}" });
-
-            }
-            else
-            {
-                return BadRequest(new Response { Status = "Error", Message = "Cannot send registeration Confirmation to the provided email " });
-            }
-
-
-            //var confirmationLink = Url.Action(nameof(ConfirmEmail), "Customer", new { token, email = user.Email }, Request.Scheme);
-            //var message = new EmailDto(user.Email!, "Sarvicny: Confirmation email link", "Sarvicny Account Confirmation Link : " + confirmationLink!);
-
-            //emailService.SendEmail(message);
-            
         }
 
 

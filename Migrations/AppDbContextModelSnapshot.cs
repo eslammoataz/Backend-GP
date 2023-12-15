@@ -47,17 +47,24 @@ namespace WebApplication1.Migrations
                     b.HasData(
                         new
                         {
-                            Id = "49fc6b32-a3ef-47d9-b45a-5cd5b03bf3f7",
+                            Id = "0bd5b2c6-5c36-4317-a819-ea0b66efe7bf",
                             ConcurrencyStamp = "1",
                             Name = "Admin",
                             NormalizedName = "ADMIN"
                         },
                         new
                         {
-                            Id = "54ceb25a-aa61-4e8d-9796-3a1df5c67c0d",
+                            Id = "0b1e6965-242c-4250-b8d8-ba9a405ffe64",
                             ConcurrencyStamp = "2",
-                            Name = "User",
-                            NormalizedName = "USER"
+                            Name = "Customer",
+                            NormalizedName = "CUSTOMER"
+                        },
+                        new
+                        {
+                            Id = "64ce14bb-3aca-4de3-b0d1-22076a6276bc",
+                            ConcurrencyStamp = "1",
+                            Name = "Worker",
+                            NormalizedName = "WORKER"
                         });
                 });
 
@@ -163,7 +170,7 @@ namespace WebApplication1.Migrations
                     b.ToTable("AspNetUserTokens", (string)null);
                 });
 
-            modelBuilder.Entity("WebApplication1.Models.User", b =>
+            modelBuilder.Entity("WebApplication1.Models.Entities.Users.User", b =>
                 {
                     b.Property<string>("Id")
                         .HasColumnType("varchar(255)");
@@ -235,9 +242,9 @@ namespace WebApplication1.Migrations
                     b.UseTptMappingStrategy();
                 });
 
-            modelBuilder.Entity("WebApplication1.Models.Admin", b =>
+            modelBuilder.Entity("WebApplication1.Models.Entities.Users.Admin", b =>
                 {
-                    b.HasBaseType("WebApplication1.Models.User");
+                    b.HasBaseType("WebApplication1.Models.Entities.Users.User");
 
                     b.ToTable("Admins", (string)null);
 
@@ -246,13 +253,13 @@ namespace WebApplication1.Migrations
                         {
                             Id = "1",
                             AccessFailedCount = 0,
-                            ConcurrencyStamp = "8ae46922-08c0-43b4-ad5f-768dd9577c20",
+                            ConcurrencyStamp = "5dadd15f-bafe-4919-ba56-78753dd3d61d",
                             Email = "admin@example.com",
                             EmailConfirmed = true,
                             LockoutEnabled = false,
                             NormalizedEmail = "ADMIN@EXAMPLE.COM",
                             NormalizedUserName = "ADMIN@EXAMPLE.COM",
-                            PasswordHash = "YourHashedPassword",
+                            PasswordHash = "admin",
                             PhoneNumberConfirmed = false,
                             SecurityStamp = "",
                             TwoFactorEnabled = false,
@@ -260,16 +267,9 @@ namespace WebApplication1.Migrations
                         });
                 });
 
-            modelBuilder.Entity("WebApplication1.Models.Company", b =>
+            modelBuilder.Entity("WebApplication1.Models.Entities.Users.Customer", b =>
                 {
-                    b.HasBaseType("WebApplication1.Models.User");
-
-                    b.ToTable("Companies", (string)null);
-                });
-
-            modelBuilder.Entity("WebApplication1.Models.Customer", b =>
-                {
-                    b.HasBaseType("WebApplication1.Models.User");
+                    b.HasBaseType("WebApplication1.Models.Entities.Users.User");
 
                     b.Property<string>("Address")
                         .IsRequired()
@@ -278,16 +278,35 @@ namespace WebApplication1.Migrations
                     b.ToTable("Customers", (string)null);
                 });
 
-            modelBuilder.Entity("WebApplication1.Models.Worker", b =>
+            modelBuilder.Entity("WebApplication1.Models.Entities.Users.ServiceProviders.Company", b =>
                 {
-                    b.HasBaseType("WebApplication1.Models.User");
+                    b.HasBaseType("WebApplication1.Models.Entities.Users.User");
+
+                    b.Property<string>("license")
+                        .IsRequired()
+                        .HasColumnType("longtext");
+
+                    b.ToTable("Companies", (string)null);
+                });
+
+            modelBuilder.Entity("WebApplication1.Models.Entities.Users.ServiceProviders.Worker", b =>
+                {
+                    b.HasBaseType("WebApplication1.Models.Entities.Users.User");
+
+                    b.Property<string>("CriminalRecord")
+                        .IsRequired()
+                        .HasColumnType("longtext");
+
+                    b.Property<string>("NationalID")
+                        .IsRequired()
+                        .HasColumnType("longtext");
 
                     b.ToTable("Workers", (string)null);
                 });
 
-            modelBuilder.Entity("WebApplication1.Models.Consultant", b =>
+            modelBuilder.Entity("WebApplication1.Models.Entities.Users.ServiceProviders.Consultant", b =>
                 {
-                    b.HasBaseType("WebApplication1.Models.Worker");
+                    b.HasBaseType("WebApplication1.Models.Entities.Users.ServiceProviders.Worker");
 
                     b.ToTable("Consultants", (string)null);
                 });
@@ -303,7 +322,7 @@ namespace WebApplication1.Migrations
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityUserClaim<string>", b =>
                 {
-                    b.HasOne("WebApplication1.Models.User", null)
+                    b.HasOne("WebApplication1.Models.Entities.Users.User", null)
                         .WithMany()
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
@@ -312,7 +331,7 @@ namespace WebApplication1.Migrations
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityUserLogin<string>", b =>
                 {
-                    b.HasOne("WebApplication1.Models.User", null)
+                    b.HasOne("WebApplication1.Models.Entities.Users.User", null)
                         .WithMany()
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
@@ -327,7 +346,7 @@ namespace WebApplication1.Migrations
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("WebApplication1.Models.User", null)
+                    b.HasOne("WebApplication1.Models.Entities.Users.User", null)
                         .WithMany()
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
@@ -336,54 +355,54 @@ namespace WebApplication1.Migrations
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityUserToken<string>", b =>
                 {
-                    b.HasOne("WebApplication1.Models.User", null)
+                    b.HasOne("WebApplication1.Models.Entities.Users.User", null)
                         .WithMany()
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
                 });
 
-            modelBuilder.Entity("WebApplication1.Models.Admin", b =>
+            modelBuilder.Entity("WebApplication1.Models.Entities.Users.Admin", b =>
                 {
-                    b.HasOne("WebApplication1.Models.User", null)
+                    b.HasOne("WebApplication1.Models.Entities.Users.User", null)
                         .WithOne()
-                        .HasForeignKey("WebApplication1.Models.Admin", "Id")
+                        .HasForeignKey("WebApplication1.Models.Entities.Users.Admin", "Id")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
                 });
 
-            modelBuilder.Entity("WebApplication1.Models.Company", b =>
+            modelBuilder.Entity("WebApplication1.Models.Entities.Users.Customer", b =>
                 {
-                    b.HasOne("WebApplication1.Models.User", null)
+                    b.HasOne("WebApplication1.Models.Entities.Users.User", null)
                         .WithOne()
-                        .HasForeignKey("WebApplication1.Models.Company", "Id")
+                        .HasForeignKey("WebApplication1.Models.Entities.Users.Customer", "Id")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
                 });
 
-            modelBuilder.Entity("WebApplication1.Models.Customer", b =>
+            modelBuilder.Entity("WebApplication1.Models.Entities.Users.ServiceProviders.Company", b =>
                 {
-                    b.HasOne("WebApplication1.Models.User", null)
+                    b.HasOne("WebApplication1.Models.Entities.Users.User", null)
                         .WithOne()
-                        .HasForeignKey("WebApplication1.Models.Customer", "Id")
+                        .HasForeignKey("WebApplication1.Models.Entities.Users.ServiceProviders.Company", "Id")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
                 });
 
-            modelBuilder.Entity("WebApplication1.Models.Worker", b =>
+            modelBuilder.Entity("WebApplication1.Models.Entities.Users.ServiceProviders.Worker", b =>
                 {
-                    b.HasOne("WebApplication1.Models.User", null)
+                    b.HasOne("WebApplication1.Models.Entities.Users.User", null)
                         .WithOne()
-                        .HasForeignKey("WebApplication1.Models.Worker", "Id")
+                        .HasForeignKey("WebApplication1.Models.Entities.Users.ServiceProviders.Worker", "Id")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
                 });
 
-            modelBuilder.Entity("WebApplication1.Models.Consultant", b =>
+            modelBuilder.Entity("WebApplication1.Models.Entities.Users.ServiceProviders.Consultant", b =>
                 {
-                    b.HasOne("WebApplication1.Models.Worker", null)
+                    b.HasOne("WebApplication1.Models.Entities.Users.ServiceProviders.Worker", null)
                         .WithOne()
-                        .HasForeignKey("WebApplication1.Models.Consultant", "Id")
+                        .HasForeignKey("WebApplication1.Models.Entities.Users.ServiceProviders.Consultant", "Id")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
                 });

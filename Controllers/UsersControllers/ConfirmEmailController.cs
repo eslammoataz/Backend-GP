@@ -3,8 +3,8 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using WebApplication1.Models;
 using WebApplication1.Models.Entities.Users;
-using WebApplication1.Services;
-using static WebApplication1.Services.IEmailConfirmService;
+using WebApplication1.Services.EmailService;
+using static WebApplication1.Services.EmailService.IEmailConfirmService;
 
 namespace WebApplication1.Controllers.UsersControllers
 {

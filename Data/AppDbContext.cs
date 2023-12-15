@@ -49,7 +49,8 @@ namespace WebApplication1.Data
         {
             builder.Entity<IdentityRole>().HasData(
                 new IdentityRole() { Name = "Admin", ConcurrencyStamp = "1", NormalizedName = "ADMIN" },
-                new IdentityRole() { Name = "User", ConcurrencyStamp = "2", NormalizedName = "USER" }
+                new IdentityRole() { Name = "Customer", ConcurrencyStamp = "2", NormalizedName = "CUSTOMER" },
+                new IdentityRole() { Name = "Worker", ConcurrencyStamp = "1", NormalizedName = "WORKER" }
                 );
 
         }
@@ -65,7 +66,7 @@ namespace WebApplication1.Data
                      Email = "admin@example.com",
                      NormalizedEmail = "ADMIN@EXAMPLE.COM",
                      EmailConfirmed = true,
-                     PasswordHash = "YourHashedPassword", // Hash the password using a secure hashing algorithm
+                     PasswordHash = "admin", // Hash the password using a secure hashing algorithm
                      SecurityStamp = string.Empty,
                  }
              );

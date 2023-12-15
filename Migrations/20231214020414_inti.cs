@@ -9,7 +9,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 namespace WebApplication1.Migrations
 {
     /// <inheritdoc />
-    public partial class intial_migration : Migration
+    public partial class inti : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
@@ -226,6 +226,8 @@ namespace WebApplication1.Migrations
                 columns: table => new
                 {
                     Id = table.Column<string>(type: "varchar(255)", nullable: false)
+                        .Annotation("MySql:CharSet", "utf8mb4"),
+                    license = table.Column<string>(type: "longtext", nullable: false)
                         .Annotation("MySql:CharSet", "utf8mb4")
                 },
                 constraints: table =>
@@ -266,6 +268,10 @@ namespace WebApplication1.Migrations
                 columns: table => new
                 {
                     Id = table.Column<string>(type: "varchar(255)", nullable: false)
+                        .Annotation("MySql:CharSet", "utf8mb4"),
+                    NationalID = table.Column<string>(type: "longtext", nullable: false)
+                        .Annotation("MySql:CharSet", "utf8mb4"),
+                    CriminalRecord = table.Column<string>(type: "longtext", nullable: false)
                         .Annotation("MySql:CharSet", "utf8mb4")
                 },
                 constraints: table =>
@@ -304,19 +310,20 @@ namespace WebApplication1.Migrations
                 columns: new[] { "Id", "ConcurrencyStamp", "Name", "NormalizedName" },
                 values: new object[,]
                 {
-                    { "61868c39-5105-4626-9627-adea75f304ce", "2", "User", "USER" },
-                    { "a734193a-30aa-4e77-9076-bc5df5801efe", "1", "Admin", "ADMIN" }
+                    { "0b1e6965-242c-4250-b8d8-ba9a405ffe64", "2", "Customer", "CUSTOMER" },
+                    { "0bd5b2c6-5c36-4317-a819-ea0b66efe7bf", "1", "Admin", "ADMIN" },
+                    { "64ce14bb-3aca-4de3-b0d1-22076a6276bc", "1", "Worker", "WORKER" }
                 });
 
             migrationBuilder.InsertData(
                 table: "Users",
                 columns: new[] { "Id", "AccessFailedCount", "ConcurrencyStamp", "Email", "EmailConfirmed", "FirstName", "LastName", "LockoutEnabled", "LockoutEnd", "NormalizedEmail", "NormalizedUserName", "PasswordHash", "PhoneNumber", "PhoneNumberConfirmed", "SecurityStamp", "TwoFactorEnabled", "UserName" },
-                values: new object[] { "4391ce53-c0e2-4c48-9768-636850006502", 0, "08b7fa5f-e2f5-451b-b18c-cf2c5d69bcc3", "admin@admin.com", false, null, null, false, null, null, null, "admin", null, false, "47983c83-8f16-4f94-b874-1f41d73c007c", false, "admin" });
+                values: new object[] { "1", 0, "5dadd15f-bafe-4919-ba56-78753dd3d61d", "admin@example.com", true, null, null, false, null, "ADMIN@EXAMPLE.COM", "ADMIN@EXAMPLE.COM", "admin", null, false, "", false, "admin@example.com" });
 
             migrationBuilder.InsertData(
                 table: "Admins",
                 column: "Id",
-                value: "4391ce53-c0e2-4c48-9768-636850006502");
+                value: "1");
 
             migrationBuilder.CreateIndex(
                 name: "IX_AspNetRoleClaims_RoleId",

@@ -23,6 +23,7 @@ namespace WebApplication1.Controllers.UsersControllers
             usermanager = userManager;
             this.config = config;
         }
+
         [HttpPost]
         [Route("Login")]
         public async Task<IActionResult> login(LoginRequestDto loginRequest)

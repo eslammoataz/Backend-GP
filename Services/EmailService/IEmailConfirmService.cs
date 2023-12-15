@@ -1,6 +1,6 @@
 ﻿using WebApplication1.Models.Entities.Users;
 
-namespace WebApplication1.Services
+namespace WebApplication1.Services.EmailService
 {
     public interface IEmailConfirmService
     {

@@ -7,7 +7,7 @@ using Microsoft.AspNetCore.Mvc.Routing;
 using WebApplication1.Controllers.UsersControllers;
 using WebApplication1.Models.Entities.Users;
 
-namespace WebApplication1.Services
+namespace WebApplication1.Services.EmailService
 {
     public class EmailConfirmService : IEmailConfirmService
     {
@@ -35,7 +35,9 @@ namespace WebApplication1.Services
             }
             return false;
         }
-        public string GenerateConfirmationLink(string token,string email, HttpContext httpContext = null)
+
+
+        public string GenerateConfirmationLink(string token, string email, HttpContext httpContext = null)
         {
             if (httpContext == null)
             {
@@ -46,12 +48,12 @@ namespace WebApplication1.Services
             var urlHelperFactory = _serviceProvider.GetRequiredService<IUrlHelperFactory>();
             var urlHelper = urlHelperFactory.GetUrlHelper(new ActionContext(httpContext, new RouteData(), new ActionDescriptor()));
 
-            var confirmationLink = urlHelper.Action(nameof(ConfirmEmailController.Confirm), "EmailConfirmation", new { token, email}, httpContext.Request.Scheme);
+            var confirmationLink = urlHelper.Action(nameof(ConfirmEmailController.Confirm), "EmailConfirmation", new { token, email }, httpContext.Request.Scheme);
 
             return confirmationLink;
         }
     }
 }
-      
 
-  
+
+
