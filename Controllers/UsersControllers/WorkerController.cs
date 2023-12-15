@@ -61,9 +61,6 @@ namespace WebApplication1.Controllers.UsersControllers
                 //photos
             };
 
-            logger.LogInformation("|||---------------|||");
-            logger.LogInformation("INSIDE REGISTER WORKER");
-
             var Response = await authenticationService.Register(user, role, registrationDto.Password);
 
             if (Response.Errors != null && Response.Errors.Count > 0)
@@ -72,28 +69,6 @@ namespace WebApplication1.Controllers.UsersControllers
             return Ok(Response);
 
         }
-
-
-
-
-
-        //public async Task<IActionResult> ConfirmEmail(string token, string email)
-        //{
-        //    var user = await workerManager.FindByEmailAsync(email);
-        //    if (user != null)
-        //    {
-        //        var result = await workerManager.ConfirmEmailAsync(user, token);
-        //        if (result.Succeeded)
-        //        {
-        //            return StatusCode(StatusCodes.Status200OK,
-        //              new Response { Status = "Success", Message = "Email Verified Successfully" });
-        //        }
-        //    }
-        //    return StatusCode(StatusCodes.Status500InternalServerError,
-        //               new Response { Status = "Error", Message = "This User Doesnot exist!" });
-        //}
-
-
 
     }
 }

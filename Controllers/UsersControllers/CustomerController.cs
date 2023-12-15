@@ -72,58 +72,5 @@ namespace WebApplication1.Controllers.UsersControllers
         }
 
 
-        //[HttpPost]
-        //[Route("login")]
-        //public async Task<IActionResult> login(LoginRequestDto loginRequest)
-        //{
-        //    var user = await customerManager.FindByEmailAsync(loginRequest.Email);
-        //    var isValidPassword = await customerManager.CheckPasswordAsync(user, loginRequest.password);
-
-        //    if (user == null || !isValidPassword)
-        //    {
-        //        return NotFound(new Response { Status = "Error", Message = "Invalid credentials" });
-        //    }
-
-        //    List<Claim> claims = new()
-        //            {
-        //                  new Claim("CustomerId", user.Id)
-
-        //            };
-
-        //    var tokenString = JWT.generateToken(claims, config);
-
-        //    // Set the token in the response header
-        //    Response.Headers.Add("Authorization", "Bearer " + tokenString);
-
-        //    // Set the token in a cookie
-        //    Response.Cookies.Append("Auth", tokenString, new CookieOptions
-        //    {
-        //        HttpOnly = true,
-        //        Secure = true, // Use "true" in production to ensure the cookie is only sent over HTTPS
-        //        SameSite = SameSiteMode.Strict,
-        //        Expires = DateTime.Now.AddMinutes(120) // Set the cookie expiration time
-        //    });
-
-        //    return Ok(new Response { Status = "Success", Message = "User logged in Successfully" });
-
-        //}
-
-
-        //[HttpGet("ConfirmEmail")]
-        //public async Task<IActionResult> ConfirmEmail(string token, string email)
-        //{
-        //    var user = await customerManager.FindByEmailAsync(email);
-        //    if (user != null)
-        //    {
-        //        var result = await customerManager.ConfirmEmailAsync(user, token);
-        //        if (result.Succeeded)
-        //        {
-        //            return StatusCode(StatusCodes.Status200OK,
-        //              new Response { Status = "Success", Message = "Email Verified Successfully" });
-        //        }
-        //    }
-        //    return StatusCode(StatusCodes.Status500InternalServerError,
-        //               new Response { Status = "Error", Message = "This User Doesnot exist!" });
-        //}
     }
 }
