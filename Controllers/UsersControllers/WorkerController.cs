@@ -63,7 +63,7 @@ namespace WebApplication1.Controllers.UsersControllers
 
             var Response = await authenticationService.Register(user, role, registrationDto.Password);
 
-            if (Response.Errors != null && Response.Errors.Count > 0)
+            if (Response.Status == "Error")
                 return BadRequest(Response);
 
             return Ok(Response);

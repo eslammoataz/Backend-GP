@@ -130,7 +130,7 @@ namespace WebApplication1.Services
 
             emailService.SendEmail(message);
 
-            return new Response { Status = "Success", Message = $"User Registered Successfully , Verification Email sent to " };
+            return new Response { Status = "Success", Message = $"User Registered Successfully , Verification Email sent to {user.Email} " };
 
         }
 

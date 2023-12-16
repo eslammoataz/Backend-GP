@@ -1,5 +1,6 @@
 ﻿using System;
 using System.IdentityModel.Tokens.Jwt;
+using System.Net;
 using System.Net.Mail;
 using System.Security.Claims;
 using System.Text;
@@ -70,11 +71,15 @@ namespace WebApplication1.Controllers
 
         [HttpPost]
         [Route("login")]
-        public async Task<Response> login(LoginRequestDto loginRequest)
+        public async Task<IActionResult> login(LoginRequestDto loginRequest)
         {
             var Response = await authenticationService.Login(loginRequest);
 
-            return Response;
+            if (Response.Status == "Error")
+            {
+                return Unauthorized(Response);
+            }
+            return Ok(Response);
 
         }
     }
