@@ -47,21 +47,21 @@ namespace WebApplication1.Migrations
                     b.HasData(
                         new
                         {
-                            Id = "0bd5b2c6-5c36-4317-a819-ea0b66efe7bf",
+                            Id = "1c2ebf3c-4eb4-4cd5-88b5-5ff3215986b8",
                             ConcurrencyStamp = "1",
                             Name = "Admin",
                             NormalizedName = "ADMIN"
                         },
                         new
                         {
-                            Id = "0b1e6965-242c-4250-b8d8-ba9a405ffe64",
+                            Id = "e23a673f-7bbd-468a-8451-0572b6ef28ca",
                             ConcurrencyStamp = "2",
                             Name = "Customer",
                             NormalizedName = "CUSTOMER"
                         },
                         new
                         {
-                            Id = "64ce14bb-3aca-4de3-b0d1-22076a6276bc",
+                            Id = "f324e641-5aef-4301-aa4c-dd8bb349b900",
                             ConcurrencyStamp = "1",
                             Name = "Worker",
                             NormalizedName = "WORKER"
@@ -247,24 +247,6 @@ namespace WebApplication1.Migrations
                     b.HasBaseType("WebApplication1.Models.Entities.Users.User");
 
                     b.ToTable("Admins", (string)null);
-
-                    b.HasData(
-                        new
-                        {
-                            Id = "1",
-                            AccessFailedCount = 0,
-                            ConcurrencyStamp = "5dadd15f-bafe-4919-ba56-78753dd3d61d",
-                            Email = "admin@example.com",
-                            EmailConfirmed = true,
-                            LockoutEnabled = false,
-                            NormalizedEmail = "ADMIN@EXAMPLE.COM",
-                            NormalizedUserName = "ADMIN@EXAMPLE.COM",
-                            PasswordHash = "admin",
-                            PhoneNumberConfirmed = false,
-                            SecurityStamp = "",
-                            TwoFactorEnabled = false,
-                            UserName = "admin@example.com"
-                        });
                 });
 
             modelBuilder.Entity("WebApplication1.Models.Entities.Users.Customer", b =>
