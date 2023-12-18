@@ -97,11 +97,6 @@ namespace WebApplication1.Data
                 .HasForeignKey(s => s.ParentServiceID)
                 .OnDelete(DeleteBehavior.Restrict); // Choose the appropriate delete behavior
 
-            builder.Entity<Service>()
-                .HasMany(s => s.ChildServices)
-                .WithOne(s => s.ParentService)
-                .HasForeignKey(s => s.ParentServiceID)
-                .OnDelete(DeleteBehavior.Restrict); // Choose the appropriate delete behavior
 
 
             builder.Entity<WorkerService>()

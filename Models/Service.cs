@@ -1,10 +1,21 @@
 ﻿using WebApplication1.Models.Entities.Users.ServiceProviders;
 using WebApplication1.Models;
 using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
 
 public class Service
 {
+
+    public Service()
+    {
+        ChildServices = new List<Service>();
+        Schedules = new List<Schedule>();
+        Workers = new List<Worker>();
+        WorkerServices = new List<WorkerService>();
+    }
+
     [Key]
+    [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
     public string ServiceID { get; set; }
     public string ServiceName { get; set; }
     public string? Description { get; set; }
@@ -24,9 +35,9 @@ public class Service
     public Service? ParentService { get; set; }
 
     // Navigation property for the child services
-    public List<Service> ChildServices { get; set; } = new List<Service>();
+    public List<Service>? ChildServices { get; set; }
 
-    public List<Schedule> Schedules { get; set; } = new List<Schedule>();
-    public List<Worker> Workers { get; set; } = new List<Worker>();
-    public List<WorkerService> WorkerServices { get; set; } = new List<WorkerService>();
+    public List<Schedule>? Schedules { get; set; } = new List<Schedule>();
+    public List<Worker>? Workers { get; set; } = new List<Worker>();
+    public List<WorkerService>? WorkerServices { get; set; } = new List<WorkerService>();
 }

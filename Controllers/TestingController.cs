@@ -1,4 +1,5 @@
 ﻿using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 using WebApplication1.Data;
 
 namespace WebApplication1.Controllers
@@ -18,62 +19,100 @@ namespace WebApplication1.Controllers
         }
 
         [HttpPost]
-        public IActionResult AddService([FromBody] ServiceDto serviceDto)
+        public IActionResult AddService([FromBody] ServiceDto serviceDTO)
         {
-            try
+            // Map DTO to your entity model
+            var newService = new Service
             {
-                // Map DTO to your entity model
-                var newService = new Service
+                ServiceName = serviceDTO.ServiceName,
+                Description = serviceDTO.Description,
+                Price = serviceDTO.Price,
+                AvailabilityStatus = serviceDTO.AvailabilityStatus,
+                OrderID = serviceDTO.OrderID,
+                ParentServiceID = serviceDTO.ParentServiceID
+            };
+
+
+            _context.Services.Add(newService);
+            _context.SaveChanges();
+
+            return Ok("Service added successfully!");
+        }
+
+
+
+        [HttpGet]
+        public ActionResult<object> GetServiceWithChildren()
+        {
+            var parentId = "15fb7477-688c-4b1a-8380-c2fd6430e66d"; // Assuming this is the parent service ID
+
+            var parentService = _context.Services.Include(s => s.ChildServices)
+                                                 .FirstOrDefault(s => s.ServiceID == parentId);
+
+            if (parentService == null)
+                return BadRequest("Parent service not found");
+
+            var serviceDTO = MapToDTO(parentService);
+
+            return Ok(serviceDTO);
+        }
+
+        private ServiceDTO MapToDTO(Service service)
+        {
+            var serviceDTO = new ServiceDTO
+            {
+                ServiceID = service.ServiceID,
+                ServiceName = service.ServiceName,
+                Description = service.Description,
+                Price = service.Price ?? 0,
+                ChildServices = GetChildServices(service.ChildServices)
+            };
+
+            return serviceDTO;
+        }
+
+        private List<ServiceDTO> GetChildServices(List<Service> services)
+        {
+            var childDTOs = new List<ServiceDTO>();
+
+            if (services != null && services.Any())
+            {
+                foreach (var child in services)
                 {
-                    ServiceID = serviceDto.ServiceID,
-                    ServiceName = serviceDto.ServiceName,
-                    Description = serviceDto.Description,
-                    Price = serviceDto.Price,
-                    AvailabilityStatus = serviceDto.AvailabilityStatus,
-                    OrderID = serviceDto.OrderID,
-                    ParentServiceID = serviceDto.ParentServiceID
-                    // Map other properties...
-                };
+                    var childDTO = MapToDTO(child);
+                    childDTOs.Add(childDTO);
 
-                _context.Services.Add(newService);
-                _context.SaveChanges();
+                    var grandChildDTOs = GetChildServices(child.ChildServices);
+                    childDTOs.AddRange(grandChildDTOs);
+                }
+            }
 
-                // Return the newly created service
-                return CreatedAtAction(nameof(GetService), new { id = newService.ServiceID }, newService);
-            }
-            catch (Exception ex)
-            {
-                // Handle exceptions appropriately
-                return BadRequest($"Error: {ex.Message}");
-            }
+            return childDTOs;
         }
 
-        [HttpGet("{id}")]
-        public IActionResult GetService(string id)
-        {
-            var service = _context.Services.FirstOrDefault(s => s.ServiceID == id);
-
-            if (service == null)
-            {
-                return NotFound();
-            }
-
-            return Ok(service);
-        }
     }
+
+
+    public class ServiceDTO
+    {
+        public string ServiceID { get; set; }
+        public string ServiceName { get; set; }
+        public string Description { get; set; }
+        public decimal Price { get; set; }
+        public List<ServiceDTO> ChildServices { get; set; } = new List<ServiceDTO>(); // Updated property
+    }
+
+
 
     public class ServiceDto
     {
-        public string ServiceID { get; set; }
         public string ServiceName { get; set; }
         public string? Description { get; set; }
         public decimal? Price { get; set; }
         public string? AvailabilityStatus { get; set; }
         public string? OrderID { get; set; }
         public string? ParentServiceID { get; set; }
-        // Other properties...
 
-        // You might also include properties for related entities if needed
     }
 
 }
