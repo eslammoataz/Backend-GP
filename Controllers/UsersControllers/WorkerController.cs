@@ -1,4 +1,5 @@
 ﻿using System.Security.Claims;
+using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using WebApplication1.Data;
@@ -10,12 +11,13 @@ using WebApplication1.Models.Entities.Users;
 using WebApplication1.Models.Entities.Users.ServiceProviders;
 using WebApplication1.Models.Requests.AuthRequestsValidations.Registers;
 using WebApplication1.Services;
+using WebApplication1.Services.EmailService;
 
 namespace WebApplication1.Controllers.UsersControllers
 {
 
-    // [Route("api/[controller]")]
-    //[ApiController]
+    [Route("api/[controller]")]
+    [ApiController]
     public class WorkerController : ControllerBase
     {
 
@@ -24,12 +26,13 @@ namespace WebApplication1.Controllers.UsersControllers
         private readonly UserManager<User> workerManager;
         private readonly ILogger<CustomerController> logger;
         private readonly IEmailService emailService;
+        private readonly Services.IAuthenticationService authenticationService;
         private readonly RoleManager<IdentityRole> roleManager;
 
 
         public WorkerController(AppDbContext _context, IConfiguration _config,
                 RoleManager<IdentityRole> _roleManager, UserManager<User> _customerManager,
-                ILogger<CustomerController> logger, IEmailService emailService)
+                ILogger<CustomerController> logger, IEmailService emailService, Services.IAuthenticationService authenticationService)
         {
             context = _context;
             config = _config;
@@ -37,22 +40,14 @@ namespace WebApplication1.Controllers.UsersControllers
             workerManager = _customerManager;
             this.logger = logger;
             this.emailService = emailService;
+            this.authenticationService = authenticationService;
         }
 
         [HttpPost]
         [Route("register")]
 
-        public async Task<IActionResult> register(RegisterWorker registrationDto)
+        public async Task<IActionResult> register(RegisterWorker registrationDto, string role)
         {
-            var userExist = await workerManager.FindByEmailAsync(registrationDto.Email);
-
-            if (userExist != null)
-            {
-                return BadRequest(new Response { Status = "Error", Message = "This email is already registered" });
-
-            }
-
-
             var user = new Worker()
             {
                 Email = registrationDto.Email,
@@ -66,57 +61,14 @@ namespace WebApplication1.Controllers.UsersControllers
                 //photos
             };
 
-            // it stores the password hashed already without using bcrypt
-            var result = await workerManager.CreateAsync(user, registrationDto.Password);
+            var Response = await authenticationService.Register(user, role, registrationDto.Password);
 
-            // User Registered 
-            if (!result.Succeeded)
-                return BadRequest(new { Result_Error = result.Errors, Response = new Response { Status = "Error", Message = "User Registeration Failed" } });
+            if (Response.Status == "Error")
+                return BadRequest(Response);
 
-            List<Claim> claims = new()
-            {
-                  new Claim("WorkerID", user.Id)
+            return Ok(Response);
 
-            };
-
-            var tokenString = JWT.generateToken(claims, config);
-
-            Response.Cookies.Append("Auth", tokenString, new CookieOptions
-            {
-                HttpOnly = true,
-                Secure = true, // Use "true" in production to ensure the cookie is only sent over HTTPS
-                SameSite = SameSiteMode.Strict,
-                Expires = DateTime.Now.AddMinutes(120) // Set the cookie expiration time
-            });
-
-            ////Add Token to Verify the email....
-            //var token = await workerManager.GenerateEmailConfirmationTokenAsync(user);
-            //var confirmationLink = Url.Action(nameof(ConfirmEmail), "Customer", new { token, email = user.Email }, Request.Scheme);
-            //var message = new EmailDto(user.Email!, "Sarvicny: Your application is filled successfully ", "Sarvicny Account Confirmation Link : " + confirmationLink! + "You will be notified later with your interview time");
-
-            //emailService.SendEmail(message);
-
-
-            return Ok(new Response { Status = "Success", Message = $"User Registered Successfully , Confirmation Email sent to {user.Email}" });
         }
-
-        //public async Task<IActionResult> ConfirmEmail(string token, string email)
-        //{
-        //    var user = await workerManager.FindByEmailAsync(email);
-        //    if (user != null)
-        //    {
-        //        var result = await workerManager.ConfirmEmailAsync(user, token);
-        //        if (result.Succeeded)
-        //        {
-        //            return StatusCode(StatusCodes.Status200OK,
-        //              new Response { Status = "Success", Message = "Email Verified Successfully" });
-        //        }
-        //    }
-        //    return StatusCode(StatusCodes.Status500InternalServerError,
-        //               new Response { Status = "Error", Message = "This User Doesnot exist!" });
-        //}
-
-
 
     }
 }

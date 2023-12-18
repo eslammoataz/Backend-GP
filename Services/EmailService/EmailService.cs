@@ -4,6 +4,7 @@ using MimeKit;
 using MimeKit.Text;
 using WebApplication1.Models.Emails;
 using WebApplication1.Services;
+using WebApplication1.Services.EmailService;
 
 namespace WebApplication1.ServicesWebApplication1.Services
 {
