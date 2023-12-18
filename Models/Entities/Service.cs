@@ -1,6 +1,6 @@
 ﻿using WebApplication1.Models.Entities.Users.ServiceProviders;
-using WebApplication1.Models;
 using System.ComponentModel.DataAnnotations;
+using WebApplication1.Models.Entities;
 
 public class Service
 {
@@ -9,7 +9,14 @@ public class Service
     public string ServiceName { get; set; }
     public string? Description { get; set; }
     public decimal? Price { get; set; }
-    public string? AvailabilityStatus { get; set; }
+    public string AvailabilityStatus { get; set; }
+
+
+    // Explicit foreign key for the Criteria relationship
+    public string? CriteriaID {  get; set; }
+
+    // Navigation property for the Criteria relationship
+    public Criteria? Criteria { get; set; }
 
     // Explicit foreign key for the Order relationship
     public string? OrderID { get; set; }

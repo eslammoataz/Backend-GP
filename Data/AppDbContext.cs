@@ -3,7 +3,7 @@ using System.Reflection.Metadata;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
-using WebApplication1.Models;
+using WebApplication1.Models.Entities;
 using WebApplication1.Models.Entities.Users;
 using WebApplication1.Models.Entities.Users.ServiceProviders;
 
@@ -16,7 +16,7 @@ namespace WebApplication1.Data
         public DbSet<Worker> Workers { get; set; }
         public DbSet<Consultant> Consultants { get; set; }
         public DbSet<Company> Companies { get; set; }
-
+        public DbSet<Criteria> Criterias { get; set; }
 
         public DbSet<Service> Services { get; set; }
         //public DbSet<ServiceRelation> SubServices { get; set; }
@@ -83,7 +83,11 @@ namespace WebApplication1.Data
             .HasKey(s => s.ServiceID);
 
 
-
+         builder.Entity<Service>()
+        .HasOne(s => s.Criteria)
+        .WithMany(s => s.Services)
+        .HasForeignKey(s => s.CriteriaID)
+        .OnDelete(DeleteBehavior.Restrict); // Choose the appropriate delete behavior
 
             builder.Entity<Service>()
          .HasOne(s => s.Order)

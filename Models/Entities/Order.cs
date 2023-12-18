@@ -2,7 +2,7 @@
 using System.ComponentModel.DataAnnotations.Schema;
 using WebApplication1.Models.Entities.Users;
 
-namespace WebApplication1.Models;
+namespace WebApplication1.Models.Entities;
 
 public class Order
 {

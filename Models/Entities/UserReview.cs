@@ -3,7 +3,7 @@ using System.ComponentModel.DataAnnotations.Schema;
 using Microsoft.EntityFrameworkCore;
 using WebApplication1.Models.Entities.Users;
 
-namespace WebApplication1.Models;
+namespace WebApplication1.Models.Entities;
 
 public class UserReview
 {
