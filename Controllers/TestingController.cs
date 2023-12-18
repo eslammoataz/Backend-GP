@@ -27,17 +27,13 @@ namespace WebApplication1.Controllers
                 {
                     ServiceID = serviceDto.ServiceID,
                     ServiceName = serviceDto.ServiceName,
-                    // Other properties...
-
-                    // Assuming ParentServiceID is provided in the DTO for hierarchical setup
-                    ParentServiceID = serviceDto.ParentServiceID,
+                    Description = serviceDto.Description,
+                    Price = serviceDto.Price,
+                    AvailabilityStatus = serviceDto.AvailabilityStatus,
+                    OrderID = serviceDto.OrderID,
+                    ParentServiceID = serviceDto.ParentServiceID
+                    // Map other properties...
                 };
-
-                logger.LogInformation("|||----------------------------|||");
-                logger.LogInformation("new service Name : " + newService.ServiceName);
-                logger.LogInformation("new service ID : " + newService.ServiceID);
-                logger.LogInformation("new service ID : " + newService.ParentServiceID);
-
 
                 _context.Services.Add(newService);
                 _context.SaveChanges();
@@ -68,10 +64,16 @@ namespace WebApplication1.Controllers
 
     public class ServiceDto
     {
-
         public string ServiceID { get; set; }
         public string ServiceName { get; set; }
-        public string ParentServiceID { get; set; } // Assuming this is provided for hierarchical setup
-                                                    // Other properties...
+        public string? Description { get; set; }
+        public decimal? Price { get; set; }
+        public string? AvailabilityStatus { get; set; }
+        public string? OrderID { get; set; }
+        public string? ParentServiceID { get; set; }
+        // Other properties...
+
+        // You might also include properties for related entities if needed
     }
+
 }
