@@ -8,6 +8,7 @@ namespace WebApplication1.Models.Entities;
 public class UserReview
 {
     [Key]
+    [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
     public string ReviewID { get; set; }
     public string CustomerID { get; set; }
     public string OrderID { get; set; }

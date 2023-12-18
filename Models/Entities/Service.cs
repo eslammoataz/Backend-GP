@@ -1,10 +1,12 @@
 ﻿using WebApplication1.Models.Entities.Users.ServiceProviders;
 using System.ComponentModel.DataAnnotations;
 using WebApplication1.Models.Entities;
+using System.ComponentModel.DataAnnotations.Schema;
 
 public class Service
 {
     [Key]
+    [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
     public string ServiceID { get; set; }
     public string ServiceName { get; set; }
     public string? Description { get; set; }
@@ -13,7 +15,7 @@ public class Service
 
 
     // Explicit foreign key for the Criteria relationship
-    public string? CriteriaID {  get; set; }
+    public string? CriteriaID { get; set; }
 
     // Navigation property for the Criteria relationship
     public Criteria? Criteria { get; set; }

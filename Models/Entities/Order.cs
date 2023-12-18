@@ -7,6 +7,7 @@ namespace WebApplication1.Models.Entities;
 public class Order
 {
     [Key]
+    [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
     public string OrderID { get; set; }
     public string CustomerID { get; set; }
     public string OrderStatusID { get; set; }

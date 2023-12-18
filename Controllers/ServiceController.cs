@@ -1,4 +1,5 @@
 ﻿using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 using WebApplication1.Data;
 using WebApplication1.Models.Entities;
 using WebApplication1.Models.Requests.ServiceRequestsValidation;
@@ -19,38 +20,39 @@ namespace WebApplication1.Controllers
             this.logger = logger;
         }
 
+
+
         [HttpPost]
-        public IActionResult AddService([FromBody] AddServiceValidation serviceDto)
+        public IActionResult AddService([FromBody] AddServiceDto serviceDto)
 
         {
             var criteria = _context.Criterias.FirstOrDefault(s => s.CriteriaName == serviceDto.Criteria);
 
             try
-            { 
+            {
                 // Map DTO to your entity model
                 var newService = new Service
                 {
-                    ServiceID = serviceDto.ServiceID,
                     ServiceName = serviceDto.ServiceName,
                     Description = serviceDto.Description,
                     Price = serviceDto.Price,
                     AvailabilityStatus = serviceDto.AvailabilityStatus,
-                    //OrderID = serviceDto.OrderID,
-                    //ParentServiceID = serviceDto.ParentServiceID,
+                    OrderID = serviceDto.OrderID,
+                    ParentServiceID = serviceDto.ParentServiceID,
                     Criteria = criteria,
                     CriteriaID = criteria.CriteriaID,
-                    
-                    
                 };
-                
-                if (newService != null) {
-                    var criteriaController = new CriteriaController(_context,logger);
+
+                _context.Services.Add(newService);
+
+
+                if (newService != null)
+                {
+                    var criteriaController = new CriteriaController(_context, logger);
 
                     criteriaController.AddServicesToCriteria(criteria.CriteriaID, newService.ServiceID);
                 }
 
-                
-                _context.Services.Add(newService);
 
                 _context.SaveChanges();
 
@@ -64,10 +66,37 @@ namespace WebApplication1.Controllers
             }
         }
 
+
+
+        [HttpGet("getchilds/{parentId}")]
+        public IActionResult GetChildServices(string parentId)
+        {
+            var parentService = _context.Services
+                .Include(s => s.ChildServices) // Ensure ChildServices are loaded
+                .FirstOrDefault(s => s.ServiceID == parentId);
+
+            if (parentService == null)
+            {
+                return NotFound("Parent service not found.");
+            }
+
+            var childServices = parentService.ChildServices ?? new List<Service>();
+
+            if (childServices.Count == 0)
+            {
+                return Ok("This Service has no Subservices");
+            }
+            else
+            {
+                return Ok(childServices);
+            }
+        }
+
+
         [HttpGet("{id}")]
         public IActionResult GetService(string id)
         {
-            var service = _context.Services.FirstOrDefault(s => s.ServiceID == id);
+            var service = _context.Services.Include(s => s.ChildServices).FirstOrDefault(s => s.ServiceID == id);
 
             if (service == null)
             {

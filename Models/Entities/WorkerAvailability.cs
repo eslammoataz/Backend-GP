@@ -7,6 +7,7 @@ namespace WebApplication1.Models.Entities;
 public class WorkerAvailability
 {
     [Key]
+    [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
     public string WorkerAvailabilityID { get; set; }
     public string WorkerID { get; set; }
     public string ServiceID { get; set; }

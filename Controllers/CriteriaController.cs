@@ -19,16 +19,16 @@ namespace WebApplication1.Controllers
             _context = context;
             this.logger = logger;
         }
+
+
         [HttpPost]
-        
-        public IActionResult AddCriteria([FromBody] AddCriteriaValidation criteriaDto)
+        public IActionResult AddCriteria([FromBody] AddCriteriaDto criteriaDto)
         {
             try
             {
                 // Map DTO to your entity model
                 var newCriteria = new Criteria
                 {
-                    CriteriaID = criteriaDto.CriteriaID,
                     CriteriaName = criteriaDto.CriteriaName,
                     Description = criteriaDto.Description,
 
@@ -46,10 +46,12 @@ namespace WebApplication1.Controllers
                 return BadRequest($"Error: {ex.Message}");
             }
         }
+
+
         [HttpGet("{id}")]
         public IActionResult GetCriteria(string id)
         {
-            var criteria = _context.Criterias.FirstOrDefault(s => s.CriteriaID == id);
+            var criteria = _context.Criterias.Include(c => c.Services).FirstOrDefault(s => s.CriteriaID == id);
 
             if (criteria == null)
             {
@@ -64,30 +66,33 @@ namespace WebApplication1.Controllers
         [Route("addservice")]
         public IActionResult AddServicesToCriteria(string criteriaId, [FromBody] string serviceId)
         {
-            var criteria = _context.Criterias.Include(c => c.Services).FirstOrDefault(c => c.CriteriaID ==criteriaId);
+            var criteria = _context.Criterias.Include(c => c.Services).FirstOrDefault(c => c.CriteriaID == criteriaId);
 
             if (criteria == null)
             {
                 return NotFound($"Criteria with ID {criteriaId} not found.");
             }
 
-
             var existingService = _context.Services.FirstOrDefault(s => s.ServiceID == serviceId);
 
             if (existingService != null)
             {
-                criteria.Services.Add(existingService);
-            }
-            else
-            {
-                // Handle the case where the service with the specified ID is not found.
-                // You may want to return an error response or take appropriate action.
-                return NotFound($"Service with ID {existingService.ServiceID} not found.");
-            }
-            
-            _context.SaveChanges();
+                // Check if the service already exists in the criteria
+                var serviceExists = criteria.Services?.Any(s => s.ServiceID == serviceId);
 
-            return Ok("Services added successfully to the criteria.");
+                if (serviceExists == true)
+                {
+                    return BadRequest($"Service with ID {serviceId} already exists in the criteria.");
+                }
+
+                criteria.Services ??= new List<Service>();
+                criteria.Services.Add(existingService);
+                _context.SaveChanges();
+
+                return Ok($"Service with ID {serviceId} added successfully to the criteria.");
+            }
+
+            return NotFound($"Service with ID {serviceId} not found.");
         }
     }
 }
