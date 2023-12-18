@@ -11,8 +11,8 @@ using WebApplication1.Data;
 namespace WebApplication1.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    [Migration("20231214020414_inti")]
-    partial class inti
+    [Migration("20231218033508_adding_Entities")]
+    partial class adding_Entities
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -46,29 +46,6 @@ namespace WebApplication1.Migrations
                         .HasDatabaseName("RoleNameIndex");
 
                     b.ToTable("AspNetRoles", (string)null);
-
-                    b.HasData(
-                        new
-                        {
-                            Id = "0bd5b2c6-5c36-4317-a819-ea0b66efe7bf",
-                            ConcurrencyStamp = "1",
-                            Name = "Admin",
-                            NormalizedName = "ADMIN"
-                        },
-                        new
-                        {
-                            Id = "0b1e6965-242c-4250-b8d8-ba9a405ffe64",
-                            ConcurrencyStamp = "2",
-                            Name = "Customer",
-                            NormalizedName = "CUSTOMER"
-                        },
-                        new
-                        {
-                            Id = "64ce14bb-3aca-4de3-b0d1-22076a6276bc",
-                            ConcurrencyStamp = "1",
-                            Name = "Worker",
-                            NormalizedName = "WORKER"
-                        });
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRoleClaim<string>", b =>
@@ -173,6 +150,54 @@ namespace WebApplication1.Migrations
                     b.ToTable("AspNetUserTokens", (string)null);
                 });
 
+            modelBuilder.Entity("Service", b =>
+                {
+                    b.Property<string>("ServiceID")
+                        .HasColumnType("varchar(255)");
+
+                    b.Property<string>("AvailabilityStatus")
+                        .HasColumnType("longtext");
+
+                    b.Property<string>("Description")
+                        .HasColumnType("longtext");
+
+                    b.Property<string>("OrderID")
+                        .HasColumnType("varchar(255)");
+
+                    b.Property<string>("ParentServiceID")
+                        .HasColumnType("varchar(255)");
+
+                    b.Property<decimal?>("Price")
+                        .HasColumnType("decimal(65,30)");
+
+                    b.Property<string>("ServiceName")
+                        .IsRequired()
+                        .HasColumnType("longtext");
+
+                    b.HasKey("ServiceID");
+
+                    b.HasIndex("OrderID");
+
+                    b.HasIndex("ParentServiceID");
+
+                    b.ToTable("Services");
+                });
+
+            modelBuilder.Entity("ServiceWorker", b =>
+                {
+                    b.Property<string>("ServicesServiceID")
+                        .HasColumnType("varchar(255)");
+
+                    b.Property<string>("WorkersId")
+                        .HasColumnType("varchar(255)");
+
+                    b.HasKey("ServicesServiceID", "WorkersId");
+
+                    b.HasIndex("WorkersId");
+
+                    b.ToTable("ServiceWorker");
+                });
+
             modelBuilder.Entity("WebApplication1.Models.Entities.Users.User", b =>
                 {
                     b.Property<string>("Id")
@@ -245,29 +270,149 @@ namespace WebApplication1.Migrations
                     b.UseTptMappingStrategy();
                 });
 
+            modelBuilder.Entity("WebApplication1.Models.Order", b =>
+                {
+                    b.Property<string>("OrderID")
+                        .HasColumnType("varchar(255)");
+
+                    b.Property<string>("CustomerID")
+                        .IsRequired()
+                        .HasColumnType("varchar(255)");
+
+                    b.Property<string>("OrderStatusID")
+                        .IsRequired()
+                        .HasColumnType("varchar(255)");
+
+                    b.HasKey("OrderID");
+
+                    b.HasIndex("CustomerID");
+
+                    b.HasIndex("OrderStatusID");
+
+                    b.ToTable("Orders");
+                });
+
+            modelBuilder.Entity("WebApplication1.Models.OrderStatus", b =>
+                {
+                    b.Property<string>("OrderStatusID")
+                        .HasColumnType("varchar(255)");
+
+                    b.Property<string>("StatusName")
+                        .IsRequired()
+                        .HasColumnType("longtext");
+
+                    b.HasKey("OrderStatusID");
+
+                    b.ToTable("OrderStatuses");
+                });
+
+            modelBuilder.Entity("WebApplication1.Models.Schedule", b =>
+                {
+                    b.Property<string>("ScheduleID")
+                        .HasColumnType("varchar(255)");
+
+                    b.Property<string>("DayOfWeek")
+                        .IsRequired()
+                        .HasColumnType("longtext");
+
+                    b.Property<TimeSpan>("EndTime")
+                        .HasColumnType("time(6)");
+
+                    b.Property<string>("ServiceID")
+                        .IsRequired()
+                        .HasColumnType("varchar(255)");
+
+                    b.Property<TimeSpan>("StartTime")
+                        .HasColumnType("time(6)");
+
+                    b.HasKey("ScheduleID");
+
+                    b.HasIndex("ServiceID");
+
+                    b.ToTable("Schedules");
+                });
+
+            modelBuilder.Entity("WebApplication1.Models.UserReview", b =>
+                {
+                    b.Property<string>("ReviewID")
+                        .HasColumnType("varchar(255)");
+
+                    b.Property<string>("Comment")
+                        .IsRequired()
+                        .HasColumnType("longtext");
+
+                    b.Property<string>("CustomerID")
+                        .IsRequired()
+                        .HasColumnType("varchar(255)");
+
+                    b.Property<string>("OrderID")
+                        .IsRequired()
+                        .HasColumnType("varchar(255)");
+
+                    b.Property<int>("Rating")
+                        .HasColumnType("int");
+
+                    b.HasKey("ReviewID");
+
+                    b.HasIndex("CustomerID");
+
+                    b.HasIndex("OrderID");
+
+                    b.ToTable("UserReviews");
+                });
+
+            modelBuilder.Entity("WebApplication1.Models.WorkerAvailability", b =>
+                {
+                    b.Property<string>("WorkerAvailabilityID")
+                        .HasColumnType("varchar(255)");
+
+                    b.Property<string>("DayOfWeek")
+                        .IsRequired()
+                        .HasColumnType("longtext");
+
+                    b.Property<TimeSpan>("EndTime")
+                        .HasColumnType("time(6)");
+
+                    b.Property<string>("ServiceID")
+                        .IsRequired()
+                        .HasColumnType("varchar(255)");
+
+                    b.Property<TimeSpan>("StartTime")
+                        .HasColumnType("time(6)");
+
+                    b.Property<string>("WorkerID")
+                        .IsRequired()
+                        .HasColumnType("varchar(255)");
+
+                    b.HasKey("WorkerAvailabilityID");
+
+                    b.HasIndex("ServiceID");
+
+                    b.HasIndex("WorkerID");
+
+                    b.ToTable("WorkerAvailabilities");
+                });
+
+            modelBuilder.Entity("WebApplication1.Models.WorkerService", b =>
+                {
+                    b.Property<string>("WorkerID")
+                        .HasColumnType("varchar(255)");
+
+                    b.Property<string>("ServiceID")
+                        .HasColumnType("varchar(255)");
+
+                    b.HasKey("WorkerID", "ServiceID");
+
+                    b.HasIndex("ServiceID");
+
+                    b.ToTable("WorkerServices");
+                });
+
             modelBuilder.Entity("WebApplication1.Models.Entities.Users.Admin", b =>
                 {
                     b.HasBaseType("WebApplication1.Models.Entities.Users.User");
 
                     b.ToTable("Admins", (string)null);
-
-                    b.HasData(
-                        new
-                        {
-                            Id = "1",
-                            AccessFailedCount = 0,
-                            ConcurrencyStamp = "5dadd15f-bafe-4919-ba56-78753dd3d61d",
-                            Email = "admin@example.com",
-                            EmailConfirmed = true,
-                            LockoutEnabled = false,
-                            NormalizedEmail = "ADMIN@EXAMPLE.COM",
-                            NormalizedUserName = "ADMIN@EXAMPLE.COM",
-                            PasswordHash = "admin",
-                            PhoneNumberConfirmed = false,
-                            SecurityStamp = "",
-                            TwoFactorEnabled = false,
-                            UserName = "admin@example.com"
-                        });
                 });
 
             modelBuilder.Entity("WebApplication1.Models.Entities.Users.Customer", b =>
@@ -365,6 +510,125 @@ namespace WebApplication1.Migrations
                         .IsRequired();
                 });
 
+            modelBuilder.Entity("Service", b =>
+                {
+                    b.HasOne("WebApplication1.Models.Order", "Order")
+                        .WithMany("Services")
+                        .HasForeignKey("OrderID")
+                        .OnDelete(DeleteBehavior.Restrict);
+
+                    b.HasOne("Service", "ParentService")
+                        .WithMany("ChildServices")
+                        .HasForeignKey("ParentServiceID")
+                        .OnDelete(DeleteBehavior.Restrict);
+
+                    b.Navigation("Order");
+
+                    b.Navigation("ParentService");
+                });
+
+            modelBuilder.Entity("ServiceWorker", b =>
+                {
+                    b.HasOne("Service", null)
+                        .WithMany()
+                        .HasForeignKey("ServicesServiceID")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("WebApplication1.Models.Entities.Users.ServiceProviders.Worker", null)
+                        .WithMany()
+                        .HasForeignKey("WorkersId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+                });
+
+            modelBuilder.Entity("WebApplication1.Models.Order", b =>
+                {
+                    b.HasOne("WebApplication1.Models.Entities.Users.Customer", "Customer")
+                        .WithMany("Orders")
+                        .HasForeignKey("CustomerID")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("WebApplication1.Models.OrderStatus", "OrderStatus")
+                        .WithMany()
+                        .HasForeignKey("OrderStatusID")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Customer");
+
+                    b.Navigation("OrderStatus");
+                });
+
+            modelBuilder.Entity("WebApplication1.Models.Schedule", b =>
+                {
+                    b.HasOne("Service", "Service")
+                        .WithMany("Schedules")
+                        .HasForeignKey("ServiceID")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Service");
+                });
+
+            modelBuilder.Entity("WebApplication1.Models.UserReview", b =>
+                {
+                    b.HasOne("WebApplication1.Models.Entities.Users.Customer", "Customer")
+                        .WithMany()
+                        .HasForeignKey("CustomerID")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("WebApplication1.Models.Order", "Order")
+                        .WithMany()
+                        .HasForeignKey("OrderID")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Customer");
+
+                    b.Navigation("Order");
+                });
+
+            modelBuilder.Entity("WebApplication1.Models.WorkerAvailability", b =>
+                {
+                    b.HasOne("Service", "Service")
+                        .WithMany()
+                        .HasForeignKey("ServiceID")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("WebApplication1.Models.Entities.Users.ServiceProviders.Worker", "Worker")
+                        .WithMany("Availabilities")
+                        .HasForeignKey("WorkerID")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Service");
+
+                    b.Navigation("Worker");
+                });
+
+            modelBuilder.Entity("WebApplication1.Models.WorkerService", b =>
+                {
+                    b.HasOne("Service", "Service")
+                        .WithMany("WorkerServices")
+                        .HasForeignKey("ServiceID")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.HasOne("WebApplication1.Models.Entities.Users.ServiceProviders.Worker", "Worker")
+                        .WithMany("WorkerServices")
+                        .HasForeignKey("WorkerID")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.Navigation("Service");
+
+                    b.Navigation("Worker");
+                });
+
             modelBuilder.Entity("WebApplication1.Models.Entities.Users.Admin", b =>
                 {
                     b.HasOne("WebApplication1.Models.Entities.Users.User", null)
@@ -408,6 +672,32 @@ namespace WebApplication1.Migrations
                         .HasForeignKey("WebApplication1.Models.Entities.Users.ServiceProviders.Consultant", "Id")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
+                });
+
+            modelBuilder.Entity("Service", b =>
+                {
+                    b.Navigation("ChildServices");
+
+                    b.Navigation("Schedules");
+
+                    b.Navigation("WorkerServices");
+                });
+
+            modelBuilder.Entity("WebApplication1.Models.Order", b =>
+                {
+                    b.Navigation("Services");
+                });
+
+            modelBuilder.Entity("WebApplication1.Models.Entities.Users.Customer", b =>
+                {
+                    b.Navigation("Orders");
+                });
+
+            modelBuilder.Entity("WebApplication1.Models.Entities.Users.ServiceProviders.Worker", b =>
+                {
+                    b.Navigation("Availabilities");
+
+                    b.Navigation("WorkerServices");
                 });
 #pragma warning restore 612, 618
         }
