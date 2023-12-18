@@ -11,7 +11,7 @@ namespace WebApplication1.Models.Requests.ServiceRequestsValidation
         public string Description { get; set; }
 
         [Required(ErrorMessage = "Service Criteria is required")]
-        public string Criteria { get; set; }
+        public string CriteriaName { get; set; }
 
         [Required(ErrorMessage = "Service Price is Required ")]
         public decimal Price { get; set; }

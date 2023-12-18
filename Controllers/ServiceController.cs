@@ -22,11 +22,22 @@ namespace WebApplication1.Controllers
 
 
 
+        /// <summary>
+        /// Gets all services.
+        /// </summary>
+        /// <remarks>Returns a list of all services.</remarks>
+
+
         [HttpPost]
         public IActionResult AddService([FromBody] AddServiceDto serviceDto)
 
         {
-            var criteria = _context.Criterias.FirstOrDefault(s => s.CriteriaName == serviceDto.Criteria);
+            var criteria = _context.Criterias.FirstOrDefault(s => s.CriteriaName == serviceDto.CriteriaName);
+
+            if (criteria == null)
+            {
+                return BadRequest("Criteria Doesnot Exist");
+            }
 
             try
             {
