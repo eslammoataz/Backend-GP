@@ -18,7 +18,7 @@ namespace WebApplication1.Models.Requests.ServiceRequestsValidation
 
         [Required(ErrorMessage = "Service Availability status is Required ")]
         public string AvailabilityStatus { get; set; }
-        public string? OrderID { get; set; }
+        
 
         public string? ParentServiceID { get; set; }
 

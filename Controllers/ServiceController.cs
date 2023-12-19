@@ -48,7 +48,6 @@ namespace WebApplication1.Controllers
                     Description = serviceDto.Description,
                     Price = serviceDto.Price,
                     AvailabilityStatus = serviceDto.AvailabilityStatus,
-                    OrderID = serviceDto.OrderID,
                     ParentServiceID = serviceDto.ParentServiceID,
                     Criteria = criteria,
                     CriteriaID = criteria.CriteriaID,

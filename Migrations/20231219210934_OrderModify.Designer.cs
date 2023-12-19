@@ -2,6 +2,7 @@
 using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using WebApplication1.Data;
 
@@ -10,9 +11,11 @@ using WebApplication1.Data;
 namespace WebApplication1.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    partial class AppDbContextModelSnapshot : ModelSnapshot
+    [Migration("20231219210934_OrderModify")]
+    partial class OrderModify
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -43,29 +46,6 @@ namespace WebApplication1.Migrations
                         .HasDatabaseName("RoleNameIndex");
 
                     b.ToTable("AspNetRoles", (string)null);
-
-                    b.HasData(
-                        new
-                        {
-                            Id = "0a64d4a6-d169-4fc0-8d14-ce8a826d786d",
-                            ConcurrencyStamp = "1",
-                            Name = "Admin",
-                            NormalizedName = "ADMIN"
-                        },
-                        new
-                        {
-                            Id = "3b96100b-e029-4a5c-8d51-bf10e93cbee8",
-                            ConcurrencyStamp = "2",
-                            Name = "Customer",
-                            NormalizedName = "CUSTOMER"
-                        },
-                        new
-                        {
-                            Id = "760a1668-dd0b-4390-a7c5-9d3a40ca0bcd",
-                            ConcurrencyStamp = "1",
-                            Name = "Worker",
-                            NormalizedName = "WORKER"
-                        });
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRoleClaim<string>", b =>
@@ -186,6 +166,9 @@ namespace WebApplication1.Migrations
                     b.Property<string>("Description")
                         .HasColumnType("longtext");
 
+                    b.Property<string>("OrderID")
+                        .HasColumnType("varchar(255)");
+
                     b.Property<string>("ParentServiceID")
                         .HasColumnType("varchar(255)");
 
@@ -199,6 +182,8 @@ namespace WebApplication1.Migrations
                     b.HasKey("ServiceID");
 
                     b.HasIndex("CriteriaID");
+
+                    b.HasIndex("OrderID");
 
                     b.HasIndex("ParentServiceID");
 
@@ -278,13 +263,6 @@ namespace WebApplication1.Migrations
                     b.HasKey("OrderStatusID");
 
                     b.ToTable("OrderStatuses");
-
-                    b.HasData(
-                        new
-                        {
-                            OrderStatusID = "1",
-                            StatusName = "Set"
-                        });
                 });
 
             modelBuilder.Entity("WebApplication1.Models.Entities.Schedule", b =>
@@ -456,12 +434,7 @@ namespace WebApplication1.Migrations
                     b.Property<string>("ServiceID")
                         .HasColumnType("varchar(255)");
 
-                    b.Property<string>("OrderID")
-                        .HasColumnType("varchar(255)");
-
                     b.HasKey("WorkerID", "ServiceID");
-
-                    b.HasIndex("OrderID");
 
                     b.HasIndex("ServiceID");
 
@@ -577,6 +550,10 @@ namespace WebApplication1.Migrations
                         .HasForeignKey("CriteriaID")
                         .OnDelete(DeleteBehavior.Restrict);
 
+                    b.HasOne("WebApplication1.Models.Entities.Order", null)
+                        .WithMany("Services")
+                        .HasForeignKey("OrderID");
+
                     b.HasOne("Service", "ParentService")
                         .WithMany("ChildServices")
                         .HasForeignKey("ParentServiceID")
@@ -670,10 +647,6 @@ namespace WebApplication1.Migrations
 
             modelBuilder.Entity("WebApplication1.Models.Entities.WorkerService", b =>
                 {
-                    b.HasOne("WebApplication1.Models.Entities.Order", null)
-                        .WithMany("WorkerServices")
-                        .HasForeignKey("OrderID");
-
                     b.HasOne("Service", "Service")
                         .WithMany("WorkerServices")
                         .HasForeignKey("ServiceID")
@@ -752,7 +725,7 @@ namespace WebApplication1.Migrations
 
             modelBuilder.Entity("WebApplication1.Models.Entities.Order", b =>
                 {
-                    b.Navigation("WorkerServices");
+                    b.Navigation("Services");
                 });
 
             modelBuilder.Entity("WebApplication1.Models.Entities.Users.Customer", b =>

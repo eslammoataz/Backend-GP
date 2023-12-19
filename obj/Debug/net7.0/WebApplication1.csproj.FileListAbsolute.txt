@@ -509,3 +509,5 @@ C:\Users\Karen\source\repos\Backend-GP\obj\Debug\net7.0\WebApplication1.genrunti
 C:\Users\Karen\source\repos\Backend-GP\obj\Debug\net7.0\ref\WebApplication1.dll
 C:\Users\Nemox\source\repos\WebApplication1\WebApplication1\bin\Debug\net7.0\WebApplication1.xml
 C:\Users\Nemox\source\repos\WebApplication1\WebApplication1\obj\Debug\net7.0\WebApplication1.xml
+C:\Users\Karen\Source\Repos\Backend-GP\bin\Debug\net7.0\WebApplication1.xml
+C:\Users\Karen\Source\Repos\Backend-GP\obj\Debug\net7.0\WebApplication1.xml

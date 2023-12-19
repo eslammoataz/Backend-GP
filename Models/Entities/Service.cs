@@ -20,11 +20,6 @@ public class Service
     // Navigation property for the Criteria relationship
     public Criteria? Criteria { get; set; }
 
-    // Explicit foreign key for the Order relationship
-    public string? OrderID { get; set; }
-
-    // Navigation property for the Order relationship
-    public Order? Order { get; set; }
 
     // Foreign key for self-referencing relationship
     public string? ParentServiceID { get; set; }

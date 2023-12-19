@@ -2,6 +2,7 @@
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 using System;
 using System.Security.Claims;
 using WebApplication1.Data;
@@ -12,6 +13,7 @@ using WebApplication1.Models.Entities;
 using WebApplication1.Models.Entities.Users;
 using WebApplication1.Models.Requests.AuthRequests;
 using WebApplication1.Models.Requests.AuthRequestsValidations.Registers;
+using WebApplication1.Models.Requests.OrderRequestsValidations;
 using WebApplication1.Services;
 using WebApplication1.Services.EmailService;
 
@@ -70,7 +72,7 @@ namespace WebApplication1.Controllers.UsersControllers
             return Ok(Response);
 
         }
-
+       
 
     }
 }

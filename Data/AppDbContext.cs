@@ -54,7 +54,8 @@ namespace WebApplication1.Data
             // Configure the Admin table
             builder.Entity<Admin>().ToTable("Admins");
 
-            //SeedRoles(builder);
+            SeedRoles(builder);
+            SeedOrderStatusData(builder);
 
             // Define your relationships here using Fluent API
 
@@ -89,11 +90,11 @@ namespace WebApplication1.Data
         .HasForeignKey(s => s.CriteriaID)
         .OnDelete(DeleteBehavior.Restrict); // Choose the appropriate delete behavior
 
-            builder.Entity<Service>()
-         .HasOne(s => s.Order)
-         .WithMany(o => o.Services)
-         .HasForeignKey(s => s.OrderID)
-         .OnDelete(DeleteBehavior.Restrict); // Choose the appropriate delete behavior
+         //   builder.Entity<Service>()
+         //.HasOne(s => s.Order)
+         //.WithMany(o => o.Services)
+         //.HasForeignKey(s => s.OrderID)
+         //.OnDelete(DeleteBehavior.Restrict); // Choose the appropriate delete behavior
 
             builder.Entity<Service>()
                 .HasOne(s => s.ParentService)
@@ -163,5 +164,17 @@ namespace WebApplication1.Data
                  }
              );
         }
+        private static void SeedOrderStatusData(ModelBuilder builder)
+        {
+            builder.Entity<OrderStatus>().HasData(
+                 new OrderStatus
+                 {
+                     OrderStatusID = "1", // Adjust the ID as needed
+                     StatusName="Set"
+
+                 }
+             );
+        }
+
     }
 }

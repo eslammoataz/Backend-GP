@@ -6,6 +6,7 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Hosting;
 using WebApplication1.Data;
 using WebApplication1.Models;
+using WebApplication1.Models.Entities;
 using WebApplication1.Models.Entities.Users;
 using WebApplication1.Services;
 using WebApplication1.Services.EmailService;
@@ -120,17 +121,7 @@ using (var scope = app.Services.CreateScope())
 }
 
 
-using (var scope = app.Services.CreateScope())
-{
-    var dbContext = scope.ServiceProvider.GetRequiredService<AppDbContext>();
-    dbContext.Database.EnsureCreated();
 
-    // Check if any migrations are pending
-    if (dbContext.Database.GetPendingMigrations().Any())
-    {
-        //dbContext.Database.Migrate(); // Apply pending migrations
-    }
-}
 
 
 using (var scope = app.Services.CreateScope())
@@ -153,6 +144,7 @@ using (var scope = app.Services.CreateScope())
 
         var result = await userManager.CreateAsync(admin, "Admin123#");
     }
+
 
 }
 
