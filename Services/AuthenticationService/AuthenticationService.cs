@@ -1,38 +1,12 @@
-﻿using Microsoft.AspNetCore.Identity;
-using Microsoft.AspNetCore.Mvc;
-using WebApplication1.Models;
-using WebApplication1.Models.Entities.Users;
-using System.Security.Claims;
-
-using WebApplication1.Helpers;
-using WebApplication1.Models.Entities.Users.ServiceProviders;
-using WebApplication1.Services.EmailService;
-using WebApplication1.Models.Emails;
-using System.Security.Policy;
-using Org.BouncyCastle.Asn1.Ocsp;
-using System;
-using System.IdentityModel.Tokens.Jwt;
-using System.Net.Mail;
-using System.Security.Claims;
-using System.Text;
+﻿using System.Security.Claims;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.IdentityModel.Tokens;
-using MimeKit;
-using MimeKit.Text;
-using WebApplication1.Data;
 using WebApplication1.Helpers;
 using WebApplication1.Models;
-using MailKit.Net.Smtp;
-using WebApplication1.Services;
-using Microsoft.AspNetCore.WebUtilities;
-using WebApplication1.Models.Requests.AuthRequestsValidations.Registers;
+using WebApplication1.Models.Emails;
 using WebApplication1.Models.Entities.Users;
-using WebApplication1.Models.Entities.Users.ServiceProviders;
-using WebApplication1.Services.EmailService;
-using Microsoft.AspNetCore.Routing;
 using WebApplication1.Models.Requests.AuthRequests;
-using NuGet.Protocol.Plugins;
+using WebApplication1.Services.EmailService;
 
 namespace WebApplication1.Services
 {

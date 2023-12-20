@@ -1,7 +1,6 @@
-﻿using WebApplication1.Models.Entities.Users.ServiceProviders;
-using System.ComponentModel.DataAnnotations;
-using WebApplication1.Models.Entities;
+﻿using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
+using WebApplication1.Models.Entities;
 
 public class Service
 {
@@ -31,6 +30,5 @@ public class Service
     public List<Service> ChildServices { get; set; } = new List<Service>();
 
     public List<Schedule> Schedules { get; set; } = new List<Schedule>();
-    public List<Worker> Workers { get; set; } = new List<Worker>();
     public List<WorkerService> WorkerServices { get; set; } = new List<WorkerService>();
 }

@@ -9,8 +9,6 @@
 
         public List<WorkerService> WorkerServices { get; set; } = new List<WorkerService>();
 
-        public List<Service> Services { get; set; } = new List<Service>();
-
         //image (fesh we tashbeh)
 
     }

@@ -1,6 +1,5 @@
-﻿using WebApplication1.Models.Entities.Users;
-using WebApplication1.Models;
-using WebApplication1.Models.Entities.Users.ServiceProviders;
+﻿using WebApplication1.Models;
+using WebApplication1.Models.Entities.Users;
 using WebApplication1.Models.Requests.AuthRequests;
 
 namespace WebApplication1.Services

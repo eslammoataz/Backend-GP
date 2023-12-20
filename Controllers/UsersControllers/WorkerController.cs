@@ -1,12 +1,7 @@
-﻿using System.Security.Claims;
-using Microsoft.AspNetCore.Authentication;
-using Microsoft.AspNetCore.Identity;
+﻿using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using WebApplication1.Data;
-using WebApplication1.Helpers;
 using WebApplication1.Models;
-using WebApplication1.Models.Emails;
-using WebApplication1.Models.Entities;
 using WebApplication1.Models.Entities.Users;
 using WebApplication1.Models.Entities.Users.ServiceProviders;
 using WebApplication1.Models.Requests.AuthRequestsValidations.Registers;
@@ -27,12 +22,13 @@ namespace WebApplication1.Controllers.UsersControllers
         private readonly ILogger<CustomerController> logger;
         private readonly IEmailService emailService;
         private readonly Services.IAuthenticationService authenticationService;
+        private readonly IWorkerServices workerServices;
         private readonly RoleManager<IdentityRole> roleManager;
 
 
         public WorkerController(AppDbContext _context, IConfiguration _config,
                 RoleManager<IdentityRole> _roleManager, UserManager<User> _customerManager,
-                ILogger<CustomerController> logger, IEmailService emailService, Services.IAuthenticationService authenticationService)
+                ILogger<CustomerController> logger, IEmailService emailService, Services.IAuthenticationService authenticationService, IWorkerServices workerServices)
         {
             context = _context;
             config = _config;
@@ -41,6 +37,7 @@ namespace WebApplication1.Controllers.UsersControllers
             this.logger = logger;
             this.emailService = emailService;
             this.authenticationService = authenticationService;
+            this.workerServices = workerServices;
         }
 
         [HttpPost]
@@ -68,6 +65,26 @@ namespace WebApplication1.Controllers.UsersControllers
 
             return Ok(Response);
 
+        }
+
+        [HttpPost]
+        [Route("registerService")]
+
+        public async Task<IActionResult> registerService(string workerId, string serviceId)
+        {
+            var response = await workerServices.RegisterService(workerId, serviceId);
+
+            if (response.Status == "Error")
+                return BadRequest(response);
+
+            return Ok(response);
+        }
+
+        [HttpGet]
+        [Route("getServices")]
+        public async Task<IActionResult> getRegisteredServices(string workerId)
+        {
+            return Ok(await workerServices.GetRegisteredServices(workerId));
         }
 
     }

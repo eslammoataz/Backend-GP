@@ -20,8 +20,6 @@ public class Order
     [ForeignKey("OrderStatusID")]
     public OrderStatus OrderStatus { get; set; }
 
-    public List<WorkerService> WorkerServices { get; set; } = new List<WorkerService>();
-
 
 
     // public List<Service> Services { get; set; } = new List<Service>();

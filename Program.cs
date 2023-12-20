@@ -83,6 +83,7 @@ internal class Program
         builder.Services.AddScoped<IEmailConfirmService, EmailConfirmService>();
         builder.Services.AddScoped<IAuthenticationService, AuthenticationService>();
         builder.Services.AddScoped<IEmailService, EmailService>();
+        builder.Services.AddScoped<IWorkerServices, WorkerServices>();
 
 
         // Configure the Interfaces for the Identity

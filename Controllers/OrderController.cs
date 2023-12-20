@@ -1,9 +1,5 @@
-﻿using Microsoft.AspNetCore.Http;
-using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
+﻿using Microsoft.AspNetCore.Mvc;
 using WebApplication1.Data;
-using WebApplication1.Models.Entities;
-using WebApplication1.Models.Requests.OrderRequestsValidations;
 
 namespace WebApplication1.Controllers
 {
@@ -20,56 +16,56 @@ namespace WebApplication1.Controllers
             this.logger = logger;
         }
 
-        [HttpPost]
-        [Route("order")]
-        public async Task<IActionResult> RequestOrder(RequestOrderDto orderDto, string customerID)
-        {
+        //    [HttpPost]
+        //    [Route("order")]
+        //    public async Task<IActionResult> RequestOrder(RequestOrderDto orderDto, string customerID)
+        //    {
+        //        try
+        //        {
+        //            var workerservice = _context.WorkerServices.FirstOrDefault(w => w.WorkerID == orderDto.WorkerID && w.ServiceID == orderDto.ServiceID);
+        //            if (workerservice == null)
+        //            {
+        //                return NotFound();
+        //            }
+        //            var order = new Order()
+        //            {
 
-            try
-            {
-                var workerservice = _context.WorkerServices.FirstOrDefault(w => w.WorkerID == orderDto.WorkerID && w.ServiceID==orderDto.ServiceID);
-                if (workerservice == null)
-                {
-                    return NotFound();
-                }
-                var order = new Order()
-                {
-                   
-                    CustomerID = customerID,
-                    WorkerServices= new List<WorkerService>() { workerservice },
-                    OrderStatusID = "1",
-                };
+        //                CustomerID = customerID,
+        //                WorkerServices = new List<WorkerService>() { workerservice },
+        //                OrderStatusID = "1",
+        //            };
 
-                _context.Orders.Add(order);
+        //            _context.Orders.Add(order);
 
-                _context.SaveChanges();
+        //            _context.SaveChanges();
 
 
-                // Return the newly created service
-                return CreatedAtAction(nameof(GetOrder), new { id = order.OrderID }, order);
-            }
-            catch (Exception ex)
-            {
-                // Handle exceptions appropriately
-                return BadRequest($"Error: {ex.Message}");
-            }
-        }
-        [HttpGet("{id}")]
-        public IActionResult GetOrder(string id)
-        {
-            var order = _context.Orders.FirstOrDefault(o=>o.OrderID == id);
+        //            // Return the newly created service
+        //            return CreatedAtAction(nameof(GetOrder), new { id = order.OrderID }, order);
+        //        }
+        //        catch (Exception ex)
+        //        {
+        //            // Handle exceptions appropriately
+        //            return BadRequest($"Error: {ex.Message}");
+        //        }
+        //    }
+        //    [HttpGet("{id}")]
+        //    public IActionResult GetOrder(string id)
+        //    {
+        //        var order = _context.Orders.FirstOrDefault(o => o.OrderID == id);
 
-            if ( order== null)
-            {
-                return NotFound();
-            }
+        //        if (order == null)
+        //        {
+        //            return NotFound();
+        //        }
 
-            return Ok(order);
-        }
+        //        return Ok(order);
+        //    }
+        //}
     }
 }
 
 
 
-   
+
 

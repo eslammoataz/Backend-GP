@@ -43,29 +43,6 @@ namespace WebApplication1.Migrations
                         .HasDatabaseName("RoleNameIndex");
 
                     b.ToTable("AspNetRoles", (string)null);
-
-                    b.HasData(
-                        new
-                        {
-                            Id = "0a64d4a6-d169-4fc0-8d14-ce8a826d786d",
-                            ConcurrencyStamp = "1",
-                            Name = "Admin",
-                            NormalizedName = "ADMIN"
-                        },
-                        new
-                        {
-                            Id = "3b96100b-e029-4a5c-8d51-bf10e93cbee8",
-                            ConcurrencyStamp = "2",
-                            Name = "Customer",
-                            NormalizedName = "CUSTOMER"
-                        },
-                        new
-                        {
-                            Id = "760a1668-dd0b-4390-a7c5-9d3a40ca0bcd",
-                            ConcurrencyStamp = "1",
-                            Name = "Worker",
-                            NormalizedName = "WORKER"
-                        });
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRoleClaim<string>", b =>
@@ -203,21 +180,6 @@ namespace WebApplication1.Migrations
                     b.HasIndex("ParentServiceID");
 
                     b.ToTable("Services");
-                });
-
-            modelBuilder.Entity("ServiceWorker", b =>
-                {
-                    b.Property<string>("ServicesServiceID")
-                        .HasColumnType("varchar(255)");
-
-                    b.Property<string>("WorkersId")
-                        .HasColumnType("varchar(255)");
-
-                    b.HasKey("ServicesServiceID", "WorkersId");
-
-                    b.HasIndex("WorkersId");
-
-                    b.ToTable("ServiceWorker");
                 });
 
             modelBuilder.Entity("WebApplication1.Models.Entities.Criteria", b =>
@@ -456,12 +418,7 @@ namespace WebApplication1.Migrations
                     b.Property<string>("ServiceID")
                         .HasColumnType("varchar(255)");
 
-                    b.Property<string>("OrderID")
-                        .HasColumnType("varchar(255)");
-
                     b.HasKey("WorkerID", "ServiceID");
-
-                    b.HasIndex("OrderID");
 
                     b.HasIndex("ServiceID");
 
@@ -587,21 +544,6 @@ namespace WebApplication1.Migrations
                     b.Navigation("ParentService");
                 });
 
-            modelBuilder.Entity("ServiceWorker", b =>
-                {
-                    b.HasOne("Service", null)
-                        .WithMany()
-                        .HasForeignKey("ServicesServiceID")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.HasOne("WebApplication1.Models.Entities.Users.ServiceProviders.Worker", null)
-                        .WithMany()
-                        .HasForeignKey("WorkersId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-                });
-
             modelBuilder.Entity("WebApplication1.Models.Entities.Order", b =>
                 {
                     b.HasOne("WebApplication1.Models.Entities.Users.Customer", "Customer")
@@ -670,10 +612,6 @@ namespace WebApplication1.Migrations
 
             modelBuilder.Entity("WebApplication1.Models.Entities.WorkerService", b =>
                 {
-                    b.HasOne("WebApplication1.Models.Entities.Order", null)
-                        .WithMany("WorkerServices")
-                        .HasForeignKey("OrderID");
-
                     b.HasOne("Service", "Service")
                         .WithMany("WorkerServices")
                         .HasForeignKey("ServiceID")
@@ -748,11 +686,6 @@ namespace WebApplication1.Migrations
             modelBuilder.Entity("WebApplication1.Models.Entities.Criteria", b =>
                 {
                     b.Navigation("Services");
-                });
-
-            modelBuilder.Entity("WebApplication1.Models.Entities.Order", b =>
-                {
-                    b.Navigation("WorkerServices");
                 });
 
             modelBuilder.Entity("WebApplication1.Models.Entities.Users.Customer", b =>

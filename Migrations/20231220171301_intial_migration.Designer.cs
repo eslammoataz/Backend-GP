@@ -11,8 +11,8 @@ using WebApplication1.Data;
 namespace WebApplication1.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    [Migration("20231219212417_test")]
-    partial class test
+    [Migration("20231220171301_intial_migration")]
+    partial class intial_migration
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -185,21 +185,6 @@ namespace WebApplication1.Migrations
                     b.ToTable("Services");
                 });
 
-            modelBuilder.Entity("ServiceWorker", b =>
-                {
-                    b.Property<string>("ServicesServiceID")
-                        .HasColumnType("varchar(255)");
-
-                    b.Property<string>("WorkersId")
-                        .HasColumnType("varchar(255)");
-
-                    b.HasKey("ServicesServiceID", "WorkersId");
-
-                    b.HasIndex("WorkersId");
-
-                    b.ToTable("ServiceWorker");
-                });
-
             modelBuilder.Entity("WebApplication1.Models.Entities.Criteria", b =>
                 {
                     b.Property<string>("CriteriaID")
@@ -258,6 +243,13 @@ namespace WebApplication1.Migrations
                     b.HasKey("OrderStatusID");
 
                     b.ToTable("OrderStatuses");
+
+                    b.HasData(
+                        new
+                        {
+                            OrderStatusID = "1",
+                            StatusName = "Set"
+                        });
                 });
 
             modelBuilder.Entity("WebApplication1.Models.Entities.Schedule", b =>
@@ -429,12 +421,7 @@ namespace WebApplication1.Migrations
                     b.Property<string>("ServiceID")
                         .HasColumnType("varchar(255)");
 
-                    b.Property<string>("OrderID")
-                        .HasColumnType("varchar(255)");
-
                     b.HasKey("WorkerID", "ServiceID");
-
-                    b.HasIndex("OrderID");
 
                     b.HasIndex("ServiceID");
 
@@ -560,21 +547,6 @@ namespace WebApplication1.Migrations
                     b.Navigation("ParentService");
                 });
 
-            modelBuilder.Entity("ServiceWorker", b =>
-                {
-                    b.HasOne("Service", null)
-                        .WithMany()
-                        .HasForeignKey("ServicesServiceID")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.HasOne("WebApplication1.Models.Entities.Users.ServiceProviders.Worker", null)
-                        .WithMany()
-                        .HasForeignKey("WorkersId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-                });
-
             modelBuilder.Entity("WebApplication1.Models.Entities.Order", b =>
                 {
                     b.HasOne("WebApplication1.Models.Entities.Users.Customer", "Customer")
@@ -643,10 +615,6 @@ namespace WebApplication1.Migrations
 
             modelBuilder.Entity("WebApplication1.Models.Entities.WorkerService", b =>
                 {
-                    b.HasOne("WebApplication1.Models.Entities.Order", null)
-                        .WithMany("WorkerServices")
-                        .HasForeignKey("OrderID");
-
                     b.HasOne("Service", "Service")
                         .WithMany("WorkerServices")
                         .HasForeignKey("ServiceID")
@@ -721,11 +689,6 @@ namespace WebApplication1.Migrations
             modelBuilder.Entity("WebApplication1.Models.Entities.Criteria", b =>
                 {
                     b.Navigation("Services");
-                });
-
-            modelBuilder.Entity("WebApplication1.Models.Entities.Order", b =>
-                {
-                    b.Navigation("WorkerServices");
                 });
 
             modelBuilder.Entity("WebApplication1.Models.Entities.Users.Customer", b =>

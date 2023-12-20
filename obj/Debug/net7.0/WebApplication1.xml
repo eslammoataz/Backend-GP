@@ -10,76 +10,16 @@
             </summary>
             <remarks>Returns a list of all services.</remarks>
         </member>
-        <member name="T:WebApplication1.Migrations.adding_Entities">
+        <member name="T:WebApplication1.Migrations.intial_migration">
             <inheritdoc />
         </member>
-        <member name="M:WebApplication1.Migrations.adding_Entities.Up(Microsoft.EntityFrameworkCore.Migrations.MigrationBuilder)">
+        <member name="M:WebApplication1.Migrations.intial_migration.Up(Microsoft.EntityFrameworkCore.Migrations.MigrationBuilder)">
             <inheritdoc />
         </member>
-        <member name="M:WebApplication1.Migrations.adding_Entities.Down(Microsoft.EntityFrameworkCore.Migrations.MigrationBuilder)">
+        <member name="M:WebApplication1.Migrations.intial_migration.Down(Microsoft.EntityFrameworkCore.Migrations.MigrationBuilder)">
             <inheritdoc />
         </member>
-        <member name="M:WebApplication1.Migrations.adding_Entities.BuildTargetModel(Microsoft.EntityFrameworkCore.ModelBuilder)">
-            <inheritdoc />
-        </member>
-        <member name="T:WebApplication1.Migrations.AddCriteria">
-            <inheritdoc />
-        </member>
-        <member name="M:WebApplication1.Migrations.AddCriteria.Up(Microsoft.EntityFrameworkCore.Migrations.MigrationBuilder)">
-            <inheritdoc />
-        </member>
-        <member name="M:WebApplication1.Migrations.AddCriteria.Down(Microsoft.EntityFrameworkCore.Migrations.MigrationBuilder)">
-            <inheritdoc />
-        </member>
-        <member name="M:WebApplication1.Migrations.AddCriteria.BuildTargetModel(Microsoft.EntityFrameworkCore.ModelBuilder)">
-            <inheritdoc />
-        </member>
-        <member name="T:WebApplication1.Migrations.ServicesModifications">
-            <inheritdoc />
-        </member>
-        <member name="M:WebApplication1.Migrations.ServicesModifications.Up(Microsoft.EntityFrameworkCore.Migrations.MigrationBuilder)">
-            <inheritdoc />
-        </member>
-        <member name="M:WebApplication1.Migrations.ServicesModifications.Down(Microsoft.EntityFrameworkCore.Migrations.MigrationBuilder)">
-            <inheritdoc />
-        </member>
-        <member name="M:WebApplication1.Migrations.ServicesModifications.BuildTargetModel(Microsoft.EntityFrameworkCore.ModelBuilder)">
-            <inheritdoc />
-        </member>
-        <member name="T:WebApplication1.Migrations.OrderModify">
-            <inheritdoc />
-        </member>
-        <member name="M:WebApplication1.Migrations.OrderModify.Up(Microsoft.EntityFrameworkCore.Migrations.MigrationBuilder)">
-            <inheritdoc />
-        </member>
-        <member name="M:WebApplication1.Migrations.OrderModify.Down(Microsoft.EntityFrameworkCore.Migrations.MigrationBuilder)">
-            <inheritdoc />
-        </member>
-        <member name="M:WebApplication1.Migrations.OrderModify.BuildTargetModel(Microsoft.EntityFrameworkCore.ModelBuilder)">
-            <inheritdoc />
-        </member>
-        <member name="T:WebApplication1.Migrations.test">
-            <inheritdoc />
-        </member>
-        <member name="M:WebApplication1.Migrations.test.Up(Microsoft.EntityFrameworkCore.Migrations.MigrationBuilder)">
-            <inheritdoc />
-        </member>
-        <member name="M:WebApplication1.Migrations.test.Down(Microsoft.EntityFrameworkCore.Migrations.MigrationBuilder)">
-            <inheritdoc />
-        </member>
-        <member name="M:WebApplication1.Migrations.test.BuildTargetModel(Microsoft.EntityFrameworkCore.ModelBuilder)">
-            <inheritdoc />
-        </member>
-        <member name="T:WebApplication1.Migrations.yarab">
-            <inheritdoc />
-        </member>
-        <member name="M:WebApplication1.Migrations.yarab.Up(Microsoft.EntityFrameworkCore.Migrations.MigrationBuilder)">
-            <inheritdoc />
-        </member>
-        <member name="M:WebApplication1.Migrations.yarab.Down(Microsoft.EntityFrameworkCore.Migrations.MigrationBuilder)">
-            <inheritdoc />
-        </member>
-        <member name="M:WebApplication1.Migrations.yarab.BuildTargetModel(Microsoft.EntityFrameworkCore.ModelBuilder)">
+        <member name="M:WebApplication1.Migrations.intial_migration.BuildTargetModel(Microsoft.EntityFrameworkCore.ModelBuilder)">
             <inheritdoc />
         </member>
     </members>
