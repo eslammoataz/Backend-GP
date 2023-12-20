@@ -12,7 +12,7 @@ public class Order
     public string CustomerID { get; set; }
     public string OrderStatusID { get; set; }
 
-    public decimal? TotalPrice {  get; set; }
+    public decimal? TotalPrice { get; set; }
 
     [ForeignKey("CustomerID")]
     public Customer Customer { get; set; }
@@ -22,7 +22,7 @@ public class Order
 
     public List<WorkerService> WorkerServices { get; set; } = new List<WorkerService>();
 
-    
+
 
     // public List<Service> Services { get; set; } = new List<Service>();
 }

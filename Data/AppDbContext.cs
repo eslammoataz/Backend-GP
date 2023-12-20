@@ -1,7 +1,4 @@
-﻿using System.Reflection.Emit;
-using System.Reflection.Metadata;
-using Microsoft.AspNetCore.Identity;
-using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
+﻿using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
 using WebApplication1.Models.Entities;
 using WebApplication1.Models.Entities.Users;
@@ -54,7 +51,6 @@ namespace WebApplication1.Data
             // Configure the Admin table
             builder.Entity<Admin>().ToTable("Admins");
 
-            SeedRoles(builder);
             SeedOrderStatusData(builder);
 
             // Define your relationships here using Fluent API
@@ -84,17 +80,17 @@ namespace WebApplication1.Data
             .HasKey(s => s.ServiceID);
 
 
-         builder.Entity<Service>()
-        .HasOne(s => s.Criteria)
-        .WithMany(s => s.Services)
-        .HasForeignKey(s => s.CriteriaID)
-        .OnDelete(DeleteBehavior.Restrict); // Choose the appropriate delete behavior
+            builder.Entity<Service>()
+           .HasOne(s => s.Criteria)
+           .WithMany(s => s.Services)
+           .HasForeignKey(s => s.CriteriaID)
+           .OnDelete(DeleteBehavior.Restrict); // Choose the appropriate delete behavior
 
-         //   builder.Entity<Service>()
-         //.HasOne(s => s.Order)
-         //.WithMany(o => o.Services)
-         //.HasForeignKey(s => s.OrderID)
-         //.OnDelete(DeleteBehavior.Restrict); // Choose the appropriate delete behavior
+            //   builder.Entity<Service>()
+            //.HasOne(s => s.Order)
+            //.WithMany(o => o.Services)
+            //.HasForeignKey(s => s.OrderID)
+            //.OnDelete(DeleteBehavior.Restrict); // Choose the appropriate delete behavior
 
             builder.Entity<Service>()
                 .HasOne(s => s.ParentService)
@@ -138,39 +134,14 @@ namespace WebApplication1.Data
 
         }
 
-        private static void SeedRoles(ModelBuilder builder)
-        {
-            builder.Entity<IdentityRole>().HasData(
-                new IdentityRole() { Name = "Admin", ConcurrencyStamp = "1", NormalizedName = "ADMIN" },
-                new IdentityRole() { Name = "Customer", ConcurrencyStamp = "2", NormalizedName = "CUSTOMER" },
-                new IdentityRole() { Name = "Worker", ConcurrencyStamp = "1", NormalizedName = "WORKER" }
-                );
 
-        }
-
-        private static void SeedAdminData(ModelBuilder builder)
-        {
-            builder.Entity<Admin>().HasData(
-                 new Admin
-                 {
-                     Id = "1", // Adjust the ID as needed
-                     UserName = "admin@example.com",
-                     NormalizedUserName = "ADMIN@EXAMPLE.COM",
-                     Email = "admin@example.com",
-                     NormalizedEmail = "ADMIN@EXAMPLE.COM",
-                     EmailConfirmed = true,
-                     PasswordHash = "admin", // Hash the password using a secure hashing algorithm
-                     SecurityStamp = string.Empty,
-                 }
-             );
-        }
         private static void SeedOrderStatusData(ModelBuilder builder)
         {
             builder.Entity<OrderStatus>().HasData(
                  new OrderStatus
                  {
                      OrderStatusID = "1", // Adjust the ID as needed
-                     StatusName="Set"
+                     StatusName = "Set"
 
                  }
              );
