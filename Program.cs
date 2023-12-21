@@ -1,8 +1,10 @@
+using System;
 using System.Text.Json.Serialization;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using WebApplication1.Data;
+using WebApplication1.Middlewares;
 using WebApplication1.Models.Entities.Users;
 using WebApplication1.Services;
 using WebApplication1.Services.EmailService;
@@ -85,6 +87,8 @@ internal class Program
         builder.Services.AddScoped<IEmailService, EmailService>();
         builder.Services.AddScoped<IWorkerServices, WorkerServices>();
 
+        builder.Services.AddTransient<GlobalExceptionHandlingMiddleware>();
+
 
         // Configure the Interfaces for the Identity
         builder.Services.AddIdentity<User, IdentityRole>()
@@ -158,8 +162,8 @@ internal class Program
 
         app.UseHttpsRedirection();
         app.UseCors();
+
         app.UseAuthentication();
-        app.UseAuthorization();
 
 
         //to register middlewares
@@ -174,8 +178,9 @@ internal class Program
         //    });
         //});
 
-
+        app.UseMiddleware<GlobalExceptionHandlingMiddleware>();
         app.MapControllers();
+
         app.Run();
     }
 }

@@ -46,9 +46,9 @@ namespace WebApplication1.Data
                 await roleManager.CreateAsync(customer);
             }
 
-            if (!await roleManager.RoleExistsAsync("Worker"))
+            if (!await roleManager.RoleExistsAsync("ServiceProvider"))
             {
-                var worker = new IdentityRole("Worker");
+                var worker = new IdentityRole("ServiceProvider");
                 await roleManager.CreateAsync(worker);
             }
         }

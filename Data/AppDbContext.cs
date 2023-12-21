@@ -2,7 +2,9 @@
 using Microsoft.EntityFrameworkCore;
 using WebApplication1.Models.Entities;
 using WebApplication1.Models.Entities.Users;
+
 using WebApplication1.Models.Entities.Users.ServiceProviders;
+
 
 namespace WebApplication1.Data
 {
@@ -10,6 +12,8 @@ namespace WebApplication1.Data
     {
 
         public DbSet<Customer> Customers { get; set; }
+        public DbSet<Provider> provider { get; set; }
+
         public DbSet<Worker> Workers { get; set; }
         public DbSet<Consultant> Consultants { get; set; }
         public DbSet<Company> Companies { get; set; }
@@ -19,7 +23,7 @@ namespace WebApplication1.Data
         //public DbSet<ServiceRelation> SubServices { get; set; }
         public DbSet<Schedule> Schedules { get; set; }
         public DbSet<WorkerService> WorkerServices { get; set; }
-        public DbSet<WorkerAvailability> WorkerAvailabilities { get; set; }
+        public DbSet<ProviderAvailability> ProviderAvailabilities { get; set; }
         public DbSet<Order> Orders { get; set; }
         //public DbSet<OrderDetail> OrderDetails { get; set; }
         public DbSet<OrderStatus> OrderStatuses { get; set; }
@@ -39,6 +43,8 @@ namespace WebApplication1.Data
 
             // Configure the base User table
             builder.Entity<User>().ToTable("Users");
+
+            builder.Entity<Provider>().ToTable("ServiceProviders");
 
             // Configure the Customer table
             builder.Entity<Customer>().ToTable("Customers");
@@ -65,15 +71,11 @@ namespace WebApplication1.Data
                 .WithMany()
                 .HasForeignKey(o => o.OrderStatusID);
 
-            builder.Entity<WorkerAvailability>()
-                .HasOne(wa => wa.Worker)
+            builder.Entity<ProviderAvailability>()
+                .HasOne(wa => wa.ServiceProvider)
                 .WithMany(w => w.Availabilities)
-                .HasForeignKey(wa => wa.WorkerID);
+                .HasForeignKey(wa => wa.ServiceProviderID);
 
-            builder.Entity<WorkerAvailability>()
-                .HasOne(wa => wa.Service)
-                .WithMany()
-                .HasForeignKey(wa => wa.ServiceID);
 
 
             builder.Entity<Service>()

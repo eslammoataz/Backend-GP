@@ -1,5 +1,6 @@
 ﻿using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
+using Org.BouncyCastle.Crypto;
 using WebApplication1.Data;
 using WebApplication1.Models;
 using WebApplication1.Models.Entities.Users;
@@ -54,6 +55,7 @@ namespace WebApplication1.Controllers.UsersControllers
                 FirstName = registrationDto.FirstName,
                 CriminalRecord = registrationDto.CriminalRecord,
                 NationalID = registrationDto.NationalID,
+                isVerified= false
                 //services 
                 //photos
             };

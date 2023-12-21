@@ -23,27 +23,21 @@ namespace WebApplication1.Controllers
         [HttpPost]
         public IActionResult AddCriteria([FromBody] AddCriteriaDto criteriaDto)
         {
-            try
+
+            // Map DTO to your entity model
+            var newCriteria = new Criteria
             {
-                // Map DTO to your entity model
-                var newCriteria = new Criteria
-                {
-                    CriteriaName = criteriaDto.CriteriaName,
-                    Description = criteriaDto.Description,
+                CriteriaName = criteriaDto.CriteriaName,
+                Description = criteriaDto.Description,
 
-                };
+            };
 
-                _context.Criterias.Add(newCriteria);
-                _context.SaveChanges();
+            _context.Criterias.Add(newCriteria);
+            _context.SaveChanges();
 
-                // Return the newly created service
-                return CreatedAtAction(nameof(GetCriteria), new { id = newCriteria.CriteriaID }, newCriteria);
-            }
-            catch (Exception ex)
-            {
-                // Handle exceptions appropriately
-                return BadRequest($"Error: {ex.Message}");
-            }
+            // Return the newly created service
+            return CreatedAtAction(nameof(GetCriteria), new { id = newCriteria.CriteriaID }, newCriteria);
+
         }
 
 

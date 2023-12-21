@@ -11,8 +11,8 @@ using WebApplication1.Data;
 namespace WebApplication1.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    [Migration("20231220171301_intial_migration")]
-    partial class intial_migration
+    [Migration("20231221150525_Intial")]
+    partial class Intial
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -446,9 +446,19 @@ namespace WebApplication1.Migrations
                     b.ToTable("Customers", (string)null);
                 });
 
-            modelBuilder.Entity("WebApplication1.Models.Entities.Users.ServiceProviders.Company", b =>
+            modelBuilder.Entity("WebApplication1.Models.Entities.Users.ServiceProviders.Provider", b =>
                 {
                     b.HasBaseType("WebApplication1.Models.Entities.Users.User");
+
+                    b.Property<bool>("isVerified")
+                        .HasColumnType("tinyint(1)");
+
+                    b.ToTable("ServiceProviders", (string)null);
+                });
+
+            modelBuilder.Entity("WebApplication1.Models.Entities.Users.ServiceProviders.Company", b =>
+                {
+                    b.HasBaseType("WebApplication1.Models.Entities.Users.ServiceProviders.Provider");
 
                     b.Property<string>("license")
                         .IsRequired()
@@ -459,7 +469,7 @@ namespace WebApplication1.Migrations
 
             modelBuilder.Entity("WebApplication1.Models.Entities.Users.ServiceProviders.Worker", b =>
                 {
-                    b.HasBaseType("WebApplication1.Models.Entities.Users.User");
+                    b.HasBaseType("WebApplication1.Models.Entities.Users.ServiceProviders.Provider");
 
                     b.Property<string>("CriminalRecord")
                         .IsRequired()
@@ -650,9 +660,18 @@ namespace WebApplication1.Migrations
                         .IsRequired();
                 });
 
-            modelBuilder.Entity("WebApplication1.Models.Entities.Users.ServiceProviders.Company", b =>
+            modelBuilder.Entity("WebApplication1.Models.Entities.Users.ServiceProviders.Provider", b =>
                 {
                     b.HasOne("WebApplication1.Models.Entities.Users.User", null)
+                        .WithOne()
+                        .HasForeignKey("WebApplication1.Models.Entities.Users.ServiceProviders.Provider", "Id")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+                });
+
+            modelBuilder.Entity("WebApplication1.Models.Entities.Users.ServiceProviders.Company", b =>
+                {
+                    b.HasOne("WebApplication1.Models.Entities.Users.ServiceProviders.Provider", null)
                         .WithOne()
                         .HasForeignKey("WebApplication1.Models.Entities.Users.ServiceProviders.Company", "Id")
                         .OnDelete(DeleteBehavior.Cascade)
@@ -661,7 +680,7 @@ namespace WebApplication1.Migrations
 
             modelBuilder.Entity("WebApplication1.Models.Entities.Users.ServiceProviders.Worker", b =>
                 {
-                    b.HasOne("WebApplication1.Models.Entities.Users.User", null)
+                    b.HasOne("WebApplication1.Models.Entities.Users.ServiceProviders.Provider", null)
                         .WithOne()
                         .HasForeignKey("WebApplication1.Models.Entities.Users.ServiceProviders.Worker", "Id")
                         .OnDelete(DeleteBehavior.Cascade)

@@ -38,41 +38,35 @@ namespace WebApplication1.Controllers
                 return BadRequest("Criteria Doesnot Exist");
             }
 
-            try
+            // Map DTO to your entity model
+            var newService = new Service
             {
-                // Map DTO to your entity model
-                var newService = new Service
-                {
-                    ServiceName = serviceDto.ServiceName,
-                    Description = serviceDto.Description,
-                    Price = serviceDto.Price,
-                    AvailabilityStatus = serviceDto.AvailabilityStatus,
-                    ParentServiceID = serviceDto.ParentServiceID,
-                    Criteria = criteria,
-                    CriteriaID = criteria.CriteriaID,
-                };
+                ServiceName = serviceDto.ServiceName,
+                Description = serviceDto.Description,
+                Price = serviceDto.Price,
+                AvailabilityStatus = serviceDto.AvailabilityStatus,
+                ParentServiceID = serviceDto.ParentServiceID,
+                Criteria = criteria,
+                CriteriaID = criteria.CriteriaID,
+            };
 
-                _context.Services.Add(newService);
+            _context.Services.Add(newService);
 
 
-                if (newService != null)
-                {
-                    var criteriaController = new CriteriaController(_context, logger);
-
-                    criteriaController.AddServicesToCriteria(criteria.CriteriaID, newService.ServiceID);
-                }
-
-
-                _context.SaveChanges();
-
-                // Return the newly created service
-                return CreatedAtAction(nameof(GetService), new { id = newService.ServiceID }, newService);
-            }
-            catch (Exception ex)
+            if (newService != null)
             {
-                // Handle exceptions appropriately
-                return BadRequest($"Error: {ex.Message}");
+                var criteriaController = new CriteriaController(_context, logger);
+
+                criteriaController.AddServicesToCriteria(criteria.CriteriaID, newService.ServiceID);
             }
+
+
+            _context.SaveChanges();
+
+            // Return the newly created service
+            return CreatedAtAction(nameof(GetService), new { id = newService.ServiceID }, newService);
+
+
         }
 
 
