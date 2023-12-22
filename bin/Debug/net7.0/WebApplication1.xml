@@ -22,5 +22,17 @@
         <member name="M:WebApplication1.Migrations.Intial.BuildTargetModel(Microsoft.EntityFrameworkCore.ModelBuilder)">
             <inheritdoc />
         </member>
+        <member name="T:WebApplication1.Migrations.ModifyAvailabilities">
+            <inheritdoc />
+        </member>
+        <member name="M:WebApplication1.Migrations.ModifyAvailabilities.Up(Microsoft.EntityFrameworkCore.Migrations.MigrationBuilder)">
+            <inheritdoc />
+        </member>
+        <member name="M:WebApplication1.Migrations.ModifyAvailabilities.Down(Microsoft.EntityFrameworkCore.Migrations.MigrationBuilder)">
+            <inheritdoc />
+        </member>
+        <member name="M:WebApplication1.Migrations.ModifyAvailabilities.BuildTargetModel(Microsoft.EntityFrameworkCore.ModelBuilder)">
+            <inheritdoc />
+        </member>
     </members>
 </doc>

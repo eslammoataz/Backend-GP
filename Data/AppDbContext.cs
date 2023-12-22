@@ -1,5 +1,6 @@
 ﻿using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
+using System.Reflection.Emit;
 using WebApplication1.Models.Entities;
 using WebApplication1.Models.Entities.Users;
 
@@ -24,6 +25,7 @@ namespace WebApplication1.Data
         public DbSet<Schedule> Schedules { get; set; }
         public DbSet<WorkerService> WorkerServices { get; set; }
         public DbSet<ProviderAvailability> ProviderAvailabilities { get; set; }
+        public DbSet<TimeSlot>Slots { get; set; }   
         public DbSet<Order> Orders { get; set; }
         //public DbSet<OrderDetail> OrderDetails { get; set; }
         public DbSet<OrderStatus> OrderStatuses { get; set; }
@@ -75,6 +77,13 @@ namespace WebApplication1.Data
                 .HasOne(wa => wa.ServiceProvider)
                 .WithMany(w => w.Availabilities)
                 .HasForeignKey(wa => wa.ServiceProviderID);
+
+            builder.Entity<TimeSlot>()
+                .HasOne(ts => ts.ProviderAvailability)
+                .WithMany(pa => pa.Slots)
+                .HasForeignKey(ts => ts.ProviderAvailabilityID);
+
+
 
 
 
