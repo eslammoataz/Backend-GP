@@ -13,4 +13,6 @@ public class ProviderService
 
     [ForeignKey("ServiceID")]
     public Service Service { get; set; }
+
+    public List<ServiceRequest> ServiceRequest { get; set; }
 }

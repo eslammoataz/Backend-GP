@@ -1,11 +1,11 @@
-﻿using WebApplication1.Models.Requests.ServiceRequestsValidation;
-using WebApplication1.Models;
+﻿using WebApplication1.Models;
+using WebApplication1.Models.Requests.ServiceRequestsValidation;
 
 namespace WebApplication1.Services.Abstractions
 {
     public interface ICustomerService
     {
-        public  Task<Response<string>> RequestService(RequestServiceDto requestServiceDto, string customerId);
+        public Task<Response<string>> RequestService(RequestServiceDto requestServiceDto, string customerId);
 
         public Task<Response<string>> CancelRequestService(string customerId, string requestId);
 

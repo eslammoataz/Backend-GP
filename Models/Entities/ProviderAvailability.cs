@@ -6,6 +6,10 @@ namespace WebApplication1.Models.Entities;
 
 public class ProviderAvailability
 {
+    public ProviderAvailability()
+    {
+        Slots = new List<TimeSlot>();
+    }
     [Key]
     [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
     public string ProviderAvailabilityID { get; set; }
@@ -19,7 +23,7 @@ public class ProviderAvailability
     public string DayOfWeek { get; set; }
 
 
-    public List<TimeSlot> Slots { get; set; } = new List<TimeSlot>();
+    public List<TimeSlot> Slots { get; set; }
 
     [ForeignKey("ServiceProviderID")]
     public Provider ServiceProvider { get; set; }

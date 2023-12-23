@@ -1,11 +1,8 @@
 ﻿using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using WebApplication1.Data;
-using WebApplication1.Models;
 using WebApplication1.Models.Entities.Users;
-using WebApplication1.Models.Entities.Users.ServiceProviders;
 using WebApplication1.Models.Requests.AuthRequestsValidations.Registers;
-using WebApplication1.Models.Requests.AvailabilityRequestsValidations;
 using WebApplication1.Models.Requests.ServiceRequestsValidation;
 using WebApplication1.Services;
 using WebApplication1.Services.Abstractions;
@@ -86,9 +83,9 @@ namespace WebApplication1.Controllers.UsersControllers
 
         [HttpPost]
         [Route("cancelrequestService")]
-        public async Task<IActionResult> CancelRequestService( string customerId, string requestId)
+        public async Task<IActionResult> CancelRequestService(string customerId, string requestId)
         {
-            var Response = await customerService.CancelRequestService(customerId,requestId);
+            var Response = await customerService.CancelRequestService(customerId, requestId);
 
             if (Response.isError)
             {

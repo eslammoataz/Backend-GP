@@ -10,7 +10,7 @@ namespace WebApplication1.Models.Requests.ServiceRequestsValidation
         [Required(ErrorMessage = "Service ID is Required ")]
         public string serviceId { get; set; }
 
-        public string scheduledHour {  get; set; }  
-        
+        public string scheduledHour { get; set; }
+
     }
 }

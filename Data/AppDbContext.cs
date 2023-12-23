@@ -1,6 +1,5 @@
 ﻿using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
-using System.Reflection.Emit;
 using WebApplication1.Models.Entities;
 using WebApplication1.Models.Entities.Users;
 
@@ -27,7 +26,7 @@ namespace WebApplication1.Data
         public DbSet<ProviderAvailability> ProviderAvailabilities { get; set; }
         public DbSet<TimeSlot> Slots { get; set; }
 
-        public DbSet<Cart>Carts { get; set; }
+        public DbSet<Cart> Carts { get; set; }
         public DbSet<ServiceRequest> ServiceRequests { get; set; }
         public DbSet<Order> Orders { get; set; }
         //public DbSet<OrderDetail> OrderDetails { get; set; }
@@ -165,19 +164,14 @@ namespace WebApplication1.Data
                 .HasForeignKey(ts => ts.ProviderAvailabilityID);
 
             builder.Entity<Cart>()
-                .HasMany(sr=>sr.ServiceRequests)
-                .WithOne(c=>c.Cart)
-                .HasForeignKey(c=>c.CartID);
+                .HasMany(sr => sr.ServiceRequests)
+                .WithOne(c => c.Cart)
+                .HasForeignKey(c => c.CartID);
 
             builder.Entity<Customer>()
            .HasOne(c => c.Cart)
            .WithOne(cart => cart.Customer)
            .HasForeignKey<Cart>(cart => cart.CustomerID);
-             
-
-
-
-
 
         }
 

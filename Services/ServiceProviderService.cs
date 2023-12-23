@@ -60,11 +60,11 @@ namespace WebApplication1.Services
             };
 
             context.ProviderServices.Add(workerService);
-            
+
             await context.SaveChangesAsync();
             return new Response<string> { Message = "Worker registered for Service" };
         }
-        
+
 
         public async Task<Response<List<object>>> GetRegisteredServices(string workerId)
         {
@@ -75,7 +75,7 @@ namespace WebApplication1.Services
 
             if (worker == null)
             {
-                return new Response<List<object>>(){ isError = true ,Message = "Worker Not Found"};
+                return new Response<List<object>>() { isError = true, Message = "Worker Not Found" };
             }
 
             var registeredServicesInfo = worker.ProviderServices
@@ -86,7 +86,7 @@ namespace WebApplication1.Services
                 })
                 .ToList<object>();
 
-            return new Response<List<object>>(){ Payload = registeredServicesInfo  , Message = "Success"};
+            return new Response<List<object>>() { Payload = registeredServicesInfo, Message = "Success" };
         }
 
         public async Task<Response<string>> AddAvailability(AvailabilityDto availabilityDto, string providerId)

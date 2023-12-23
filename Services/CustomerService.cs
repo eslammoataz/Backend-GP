@@ -1,21 +1,15 @@
 ﻿using Microsoft.AspNetCore.Identity;
-using Microsoft.AspNetCore.Mvc;
-using Microsoft.DotNet.Scaffolding.Shared;
 using Microsoft.EntityFrameworkCore;
-using System.Reflection.Metadata.Ecma335;
-using System.Security.Cryptography.Xml;
-using System.Threading.Tasks;
 using WebApplication1.Data;
 using WebApplication1.Models;
 using WebApplication1.Models.Entities;
 using WebApplication1.Models.Entities.Users;
-using WebApplication1.Models.Entities.Users.ServiceProviders;
 using WebApplication1.Models.Requests.ServiceRequestsValidation;
 using WebApplication1.Services.Abstractions;
 
 namespace WebApplication1.Services
 {
-    public class CustomerService :ICustomerService
+    public class CustomerService : ICustomerService
     {
         private readonly AppDbContext context;
         private readonly ILogger<ServiceProviderService> logger;
@@ -33,19 +27,21 @@ namespace WebApplication1.Services
         }
         public async Task<Response<string>> RequestService(RequestServiceDto requestServiceDto, string customerId)
         {
-            var provider = context.Provider.FirstOrDefault(p => p.Id == requestServiceDto.providerId);
+            var provider = context.Provider.Include(p => p.Availabilities).Include(w => w.ProviderServices).FirstOrDefault(p => p.Id == requestServiceDto.providerId);
 
             if (provider == null)
             {
                 return new Response<string> { isError = true, Message = "Provider Not Found" };
             }
-           var service = context.Services.FirstOrDefault(s => s.ServiceID== requestServiceDto.serviceId);
+            var service = context.Services.FirstOrDefault(s => s.ServiceID == requestServiceDto.serviceId);
             if (service == null)
             {
                 return new Response<string> { isError = true, Message = "Service Not Found" };
 
             }
-            var workerService = provider.ProviderServices.FirstOrDefault(p => p.ProviderID == provider.Id);
+            var workerService = provider.ProviderServices
+                .FirstOrDefault(p => p.ProviderID == provider.Id);
+
             if (workerService == null)
             {
                 return new Response<string> { isError = true, Message = "There is no Worker in this Service Not Found" };
@@ -57,25 +53,27 @@ namespace WebApplication1.Services
                 return new Response<string> { isError = true, Message = "Customer Not Found" };
             }
 
-            TimeSpan scheduledHour= TimeSpan.Parse(requestServiceDto.scheduledHour);
+            TimeSpan scheduledHour = TimeSpan.Parse(requestServiceDto.scheduledHour);
 
             var slots = context.Provider
                 .Where(p => p.Id == provider.Id)
                 .SelectMany(p => p.Availabilities.SelectMany(a => a.Slots))
                 .ToList();
-            foreach ( var slot in slots ) {
 
-               if(scheduledHour >= slot.StartTime && scheduledHour <= slot.EndTime)
+            foreach (var slot in slots)
+            {
+
+                if (scheduledHour >= slot.StartTime && scheduledHour <= slot.EndTime && slot.enable == true)
                 {
                     var providerAvailability = provider.Availabilities.FirstOrDefault(p => p.ServiceProviderID == provider.Id);
 
 
-                    ///m7tagen showaia validation
+                    //m7tagen showaia validation
                     var Firstslot = new TimeSlot
                     {
 
                         StartTime = slot.StartTime,
-                        EndTime = scheduledHour.Add(TimeSpan.FromHours(0.5)),
+                        EndTime = scheduledHour.Subtract(TimeSpan.FromHours(0.5)),
                         enable = true,
                         ProviderAvailabilityID = providerAvailability.ProviderAvailabilityID,
                         ProviderAvailability = providerAvailability
@@ -91,6 +89,15 @@ namespace WebApplication1.Services
                         ProviderAvailability = providerAvailability
                     };
 
+                    providerAvailability.Slots.Add(Firstslot);
+                    providerAvailability.Slots.Add(Secondslot);
+
+                    slot.enable = false;
+
+
+                    context.SaveChanges();
+                    break;
+
                 }
                 else
                 {
@@ -98,33 +105,32 @@ namespace WebApplication1.Services
 
                 }
             }
+
             var Cart = new Cart();
 
             var newRequest = new ServiceRequest
             {
-                AddedTime=DateTime.Now,
-         
-
+                AddedTime = DateTime.Now,
+                providerService = workerService
             };
 
-            newRequest.providerServices.Add(workerService);
-            
+
             if (!string.IsNullOrEmpty(customer.CartID))
             {
-                Cart=context.Carts.FirstOrDefault(c=>c.CartID == customer.CartID);  
+                Cart = context.Carts.FirstOrDefault(c => c.CartID == customer.CartID);
                 Cart.LastChangeTime = DateTime.Now;
-                
+
             }
             else
             {
 
                 Cart = new Cart
                 {
-    
+
                     LastChangeTime = DateTime.Now,
                     CustomerID = customerId,
                     Customer = customer,
-                   
+
                 };
 
             }
@@ -137,7 +143,7 @@ namespace WebApplication1.Services
 
         }
 
-        public async Task<Response<string>> CancelRequestService( string customerId, string requestId)
+        public async Task<Response<string>> CancelRequestService(string customerId, string requestId)
         {
             var customer = context.Customers
               .Include(c => c.Cart)
@@ -148,13 +154,13 @@ namespace WebApplication1.Services
                 return new Response<string> { isError = true, Message = "Customer Not Found" };
             }
 
-            var cart= context.Carts.FirstOrDefault(c=>customerId == c.CustomerID);
+            var cart = context.Carts.FirstOrDefault(c => customerId == c.CustomerID);
             if (cart == null)
             {
                 return new Response<string> { isError = true, Message = " This Customer has no Cart" };
             }
 
-            var request= context.ServiceRequests.FirstOrDefault(s=>s.ServiceRequestID == requestId);
+            var request = context.ServiceRequests.FirstOrDefault(s => s.ServiceRequestID == requestId);
             if (request == null)
             {
                 return new Response<string> { isError = true, Message = " Request Not found" };
@@ -163,14 +169,14 @@ namespace WebApplication1.Services
             customer.Cart.ServiceRequests.Remove(request);
             context.SaveChanges();
             return new Response<string> { isError = false, Message = " Request is removed succesfully" };
-   
+
 
         }
         public async Task<Response<List<object>>> GetCustomerCart(string customerId)
         {
             var customer = context.Customers
                   .Include(c => c.Cart)
-                   .ThenInclude(ca=>ca.ServiceRequests)
+                   .ThenInclude(ca => ca.ServiceRequests)
                     .FirstOrDefault(p => p.Id == customerId);
             if (customer == null)
             {
@@ -184,6 +190,7 @@ namespace WebApplication1.Services
             }
 
             List<object> response = new List<object>();
+
             response.Add(customer.Cart.ServiceRequests);
 
             return new Response<List<object>>() { Payload = response, Message = "Success" };

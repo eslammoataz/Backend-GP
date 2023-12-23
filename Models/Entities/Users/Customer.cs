@@ -1,13 +1,14 @@
-﻿using System.ComponentModel.DataAnnotations;
-using System.ComponentModel.DataAnnotations.Schema;
-
-namespace WebApplication1.Models.Entities.Users
+﻿namespace WebApplication1.Models.Entities.Users
 {
     public class Customer : User
     {
+        public Customer()
+        {
+            Cart = new Cart();
+        }
 
         public string Address { get; set; }
-        public string? CartID {  get; set; }
+        public string? CartID { get; set; }
 
         //[ForeignKey("CartID")]
         public Cart? Cart { get; set; }
