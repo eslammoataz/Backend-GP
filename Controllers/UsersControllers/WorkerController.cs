@@ -60,7 +60,7 @@ namespace WebApplication1.Controllers.UsersControllers
 
             var Response = await authenticationService.Register(user, role, registrationDto.Password);
 
-            if (Response.Status == "Error")
+            if (Response.isError)
                 return BadRequest(Response);
 
             return Ok(Response);
@@ -74,7 +74,7 @@ namespace WebApplication1.Controllers.UsersControllers
         {
             var response = await workerServices.RegisterService(workerId, serviceId);
 
-            if (response.Status == "Error")
+            if (response.isError)
                 return BadRequest(response);
 
             return Ok(response);

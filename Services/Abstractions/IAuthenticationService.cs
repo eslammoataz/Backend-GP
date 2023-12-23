@@ -6,8 +6,9 @@ namespace WebApplication1.Services
 {
     public interface IAuthenticationService
     {
-        Task<Response> Register(User user, string role, string password);
+        Task<Response<string>> Register(User user, string role, string password);
 
-        Task<Response> Login(LoginRequestDto loginRequestDto);
+        Task<Response<string>> Login(LoginRequestDto loginRequestDto);
     }
+    
 }

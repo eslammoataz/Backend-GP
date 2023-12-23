@@ -1,4 +1,5 @@
 ﻿using System.Security.Claims;
+using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using WebApplication1.Helpers;
@@ -39,21 +40,25 @@ namespace WebApplication1.Services
         }
 
 
-        public async Task<Response> Register(User user, string role, string password)
+  public async Task<Response<string>> Register(User user, string role, string password)
         {
             var userExist = await userManager.FindByEmailAsync(user.Email);
             var roleExist = await roleManager.RoleExistsAsync(role);
 
-
+            var response = new Response<string>();
             if (userExist != null)
             {
-                return new Response { Status = "Error", Message = "This email is already registered" };
+                response.isError= true;
+                response.Errors.Add("This email is already registered");
+                return response;
 
             }
 
             if (!roleExist)
             {
-                return new Response { Status = "Error", Message = "This Role doesnot Exist" };
+                response.isError= true;
+                response.Errors.Add("This Role doesnot Exist");
+                return response;
             }
 
 
@@ -63,15 +68,9 @@ namespace WebApplication1.Services
             // User Registered 
             if (result == null || !result.Succeeded)
             {
-
-                var errorDescriptions = result.Errors.Select(error => error.Description).ToList();
-
-                return new Response
-                {
-                    Status = "Error",
-                    Message = "User Registration Failed",
-                    Errors = errorDescriptions
-                };
+                response.isError= true;
+                response.Errors = result.Errors.Select(error => error.Description).ToList();
+                return response;
             }
 
 
@@ -82,6 +81,9 @@ namespace WebApplication1.Services
             };
 
             var tokenString = JWT.generateToken(claims, config);
+
+            // Add the token to the headers
+            httpContextAccessor.HttpContext.Request.Headers.Add("Authorization", $"Bearer {tokenString}");
 
             httpContextAccessor.HttpContext.Response.Cookies.Append("Auth", tokenString, new CookieOptions
             {
@@ -103,21 +105,29 @@ namespace WebApplication1.Services
             var message = new EmailDto(user.Email!, "Sarvicny: Confirmation email link", "Sarvicny Account Confirmation Link : " + confirmationLink!);
 
             emailService.SendEmail(message);
+            
+            response.Message =  $"User Registered Successfully , Verification Email sent to {user.Email} ";
+            response.Payload = tokenString;
 
-            return new Response { Status = "Success", Message = $"User Registered Successfully , Verification Email sent to {user.Email} " };
+            return response;
 
         }
 
-        public async Task<Response> Login(LoginRequestDto loginRequestDto)
+
+        public async Task<Response<string>> Login(LoginRequestDto loginRequestDto)
         {
 
             var user = await userManager.FindByEmailAsync(loginRequestDto.Email);
 
             var isValidPassword = await userManager.CheckPasswordAsync(user, loginRequestDto.password);
+            
+            var response = new Response<string>();
 
             if (user == null || !isValidPassword)
             {
-                return new Response { Status = "Error", Message = "Invalid credentials" };
+                response.isError= true;
+                response.Errors.Add("Invalid Credentials");
+                return response;
             }
 
             List<Claim> claims = new()
@@ -129,8 +139,10 @@ namespace WebApplication1.Services
             var tokenString = JWT.generateToken(claims, config);
 
 
+            // Add the token to the headers
+            httpContextAccessor.HttpContext.Request.Headers.Add("Authorization", $"Bearer {tokenString}");
+            
             // Set the token in a cookie
-
             httpContextAccessor.HttpContext.Response.Cookies.Append("Auth", tokenString, new CookieOptions
             {
                 HttpOnly = true,
@@ -139,8 +151,9 @@ namespace WebApplication1.Services
                 Expires = DateTime.Now.AddMinutes(120) // Set the cookie expiration time
             });
 
-
-            return new Response { Status = "Success", Message = "User logged in Successfully" };
+            response.Message = "User logged in Successfully";
+            response.Payload = tokenString;
+            return response;
         }
     }
 }

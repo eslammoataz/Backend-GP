@@ -1,4 +1,6 @@
-﻿using Microsoft.AspNetCore.Identity;
+﻿using System.Net.Http.Headers;
+using Microsoft.AspNetCore.Authentication;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using WebApplication1.Data;
 using WebApplication1.Models;
@@ -6,6 +8,7 @@ using WebApplication1.Models.Entities.Users;
 using WebApplication1.Models.Requests.AuthRequests;
 using WebApplication1.Services;
 using WebApplication1.Services.EmailService;
+using IAuthenticationService = WebApplication1.Services.IAuthenticationService;
 
 namespace WebApplication1.Controllers
 {
@@ -41,17 +44,21 @@ namespace WebApplication1.Controllers
         public async Task<IActionResult> ConfirmEmail(string token, string email)
         {
             var user = await userManager.FindByEmailAsync(email);
+            var response = new Response<string>();
             if (user != null)
             {
                 var result = await userManager.ConfirmEmailAsync(user, token);
                 if (result.Succeeded)
                 {
+                    response.Message = "Email Verified Successfully";
                     return StatusCode(StatusCodes.Status200OK,
-                      new Response { Status = "Success", Message = "Email Verified Successfully" });
+                      response);
                 }
             }
+            response.Errors.Add("This User Doesnot exist!");
+            response.isError = true;
             return StatusCode(StatusCodes.Status500InternalServerError,
-                       new Response { Status = "Error", Message = "This User Doesnot exist!" });
+                       response);
         }
 
 
@@ -60,8 +67,14 @@ namespace WebApplication1.Controllers
         public async Task<IActionResult> login(LoginRequestDto loginRequest)
         {
             var Response = await authenticationService.Login(loginRequest);
+            
+            // Create an instance of HttpClient
+            using (var httpClient = new HttpClient())
+            {
+                httpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", "test");
+            }
 
-            if (Response.Status == "Error")
+            if (Response.isError)
             {
                 return Unauthorized(Response);
             }

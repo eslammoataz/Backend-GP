@@ -83,9 +83,7 @@ namespace WebApplication1.Controllers.UsersControllers
             var message = new EmailDto(provider.Email!, "Sarvicny: Worker Approved Successfully", "Congratulations you are accepted");
 
             emailService.SendEmail(message);
-
-            var success= new Response { Status = "Success", Message = $"Worker Approved Successfully , Verification Email sent to {provider.Email} " };
-            return Ok(success);
+            return Ok($"Worker Approved Successfully , Verification Email sent to {provider.Email} ");
 
         }
 
@@ -112,9 +110,8 @@ namespace WebApplication1.Controllers.UsersControllers
             var message = new EmailDto(provider.Email!, "Sarvicny: Worker Rejected", "Sorry you are rejected" );
 
             emailService.SendEmail(message);
-
-            var success = new Response { Status = "Success", Message = $" Worker Rejected Successfully, Verification Email sent to {provider.Email} " };
-            return Ok(success);
+            
+            return Ok($" Worker Rejected Successfully, Verification Email sent to {provider.Email} ");
 
         }
 

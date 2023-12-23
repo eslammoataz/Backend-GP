@@ -42,7 +42,7 @@ namespace WebApplication1.Controllers.UsersControllers
 
             var Response = await serviceProviderService.AddAvailability(availabilityDto, workerID);
 
-            if (Response.Status == "Error")
+            if (Response.isError)
             {
                 return BadRequest(Response);
             }
@@ -147,7 +147,8 @@ namespace WebApplication1.Controllers.UsersControllers
             };
 
             context.ProviderAvailabilities.Add(newavailability);
-            return CreatedAtAction(nameof(GetServiceProviderAvailabilityAsync), new { id = newavailability.ServiceProvider }, newavailability);
+            return Ok();
+            // return CreatedAtAction(nameof(GetServiceProviderAvailabilityAsync), new { id = newavailability.ServiceProvider }, newavailability);
         }
 
     }
