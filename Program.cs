@@ -6,6 +6,7 @@ using WebApplication1.Data;
 using WebApplication1.Middlewares;
 using WebApplication1.Models.Entities.Users;
 using WebApplication1.Services;
+using WebApplication1.Services.Abstractions;
 using WebApplication1.Services.EmailService;
 using WebApplication1.ServicesWebApplication1.Services;
 
@@ -85,6 +86,7 @@ internal class Program
         builder.Services.AddScoped<IAuthenticationService, AuthenticationService>();
         builder.Services.AddScoped<IEmailService, EmailService>();
         builder.Services.AddScoped<IServiceProviderService, ServiceProviderService>();
+        builder.Services.AddScoped<ICustomerService, CustomerService>();
 
         builder.Services.AddTransient<GlobalExceptionHandlingMiddleware>();
 

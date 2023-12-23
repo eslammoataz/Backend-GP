@@ -1,4 +1,5 @@
 ﻿using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
 
 namespace WebApplication1.Models.Entities.Users
 {
@@ -6,6 +7,10 @@ namespace WebApplication1.Models.Entities.Users
     {
 
         public string Address { get; set; }
+        public string? CartID {  get; set; }
+
+        //[ForeignKey("CartID")]
+        public Cart? Cart { get; set; }
 
         public List<Order> Orders { get; set; } = new List<Order>();
 

@@ -1,4 +1,5 @@
-﻿using Microsoft.EntityFrameworkCore.Metadata;
+﻿using System;
+using Microsoft.EntityFrameworkCore.Metadata;
 using Microsoft.EntityFrameworkCore.Migrations;
 
 #nullable disable
@@ -293,6 +294,8 @@ namespace WebApplication1.Migrations
                     Id = table.Column<string>(type: "varchar(255)", nullable: false)
                         .Annotation("MySql:CharSet", "utf8mb4"),
                     Address = table.Column<string>(type: "longtext", nullable: false)
+                        .Annotation("MySql:CharSet", "utf8mb4"),
+                    CartID = table.Column<string>(type: "longtext", nullable: true)
                         .Annotation("MySql:CharSet", "utf8mb4")
                 },
                 constraints: table =>
@@ -348,6 +351,28 @@ namespace WebApplication1.Migrations
                         column: x => x.ServiceID,
                         principalTable: "Services",
                         principalColumn: "ServiceID");
+                })
+                .Annotation("MySql:CharSet", "utf8mb4");
+
+            migrationBuilder.CreateTable(
+                name: "Carts",
+                columns: table => new
+                {
+                    CartID = table.Column<string>(type: "varchar(255)", nullable: false)
+                        .Annotation("MySql:CharSet", "utf8mb4"),
+                    CustomerID = table.Column<string>(type: "varchar(255)", nullable: false)
+                        .Annotation("MySql:CharSet", "utf8mb4"),
+                    LastChangeTime = table.Column<DateTime>(type: "datetime(6)", nullable: true)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_Carts", x => x.CartID);
+                    table.ForeignKey(
+                        name: "FK_Carts_Customers_CustomerID",
+                        column: x => x.CustomerID,
+                        principalTable: "Customers",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
                 })
                 .Annotation("MySql:CharSet", "utf8mb4");
 
@@ -450,6 +475,28 @@ namespace WebApplication1.Migrations
                 .Annotation("MySql:CharSet", "utf8mb4");
 
             migrationBuilder.CreateTable(
+                name: "ServiceRequests",
+                columns: table => new
+                {
+                    ServiceRequestID = table.Column<string>(type: "varchar(255)", nullable: false)
+                        .Annotation("MySql:CharSet", "utf8mb4"),
+                    CartID = table.Column<string>(type: "varchar(255)", nullable: false)
+                        .Annotation("MySql:CharSet", "utf8mb4"),
+                    AddedTime = table.Column<DateTime>(type: "datetime(6)", nullable: true)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_ServiceRequests", x => x.ServiceRequestID);
+                    table.ForeignKey(
+                        name: "FK_ServiceRequests_Carts_CartID",
+                        column: x => x.CartID,
+                        principalTable: "Carts",
+                        principalColumn: "CartID",
+                        onDelete: ReferentialAction.Cascade);
+                })
+                .Annotation("MySql:CharSet", "utf8mb4");
+
+            migrationBuilder.CreateTable(
                 name: "UserReviews",
                 columns: table => new
                 {
@@ -525,28 +572,35 @@ namespace WebApplication1.Migrations
                 .Annotation("MySql:CharSet", "utf8mb4");
 
             migrationBuilder.CreateTable(
-                name: "WorkerServices",
+                name: "ProviderServices",
                 columns: table => new
                 {
-                    WorkerID = table.Column<string>(type: "varchar(255)", nullable: false)
+                    ProviderID = table.Column<string>(type: "varchar(255)", nullable: false)
                         .Annotation("MySql:CharSet", "utf8mb4"),
                     ServiceID = table.Column<string>(type: "varchar(255)", nullable: false)
+                        .Annotation("MySql:CharSet", "utf8mb4"),
+                    ServiceRequestID = table.Column<string>(type: "varchar(255)", nullable: true)
                         .Annotation("MySql:CharSet", "utf8mb4")
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_WorkerServices", x => new { x.WorkerID, x.ServiceID });
+                    table.PrimaryKey("PK_ProviderServices", x => new { x.ProviderID, x.ServiceID });
                     table.ForeignKey(
-                        name: "FK_WorkerServices_Services_ServiceID",
+                        name: "FK_ProviderServices_ServiceProviders_ProviderID",
+                        column: x => x.ProviderID,
+                        principalTable: "ServiceProviders",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Restrict);
+                    table.ForeignKey(
+                        name: "FK_ProviderServices_ServiceRequests_ServiceRequestID",
+                        column: x => x.ServiceRequestID,
+                        principalTable: "ServiceRequests",
+                        principalColumn: "ServiceRequestID");
+                    table.ForeignKey(
+                        name: "FK_ProviderServices_Services_ServiceID",
                         column: x => x.ServiceID,
                         principalTable: "Services",
                         principalColumn: "ServiceID",
-                        onDelete: ReferentialAction.Restrict);
-                    table.ForeignKey(
-                        name: "FK_WorkerServices_Workers_WorkerID",
-                        column: x => x.WorkerID,
-                        principalTable: "Workers",
-                        principalColumn: "Id",
                         onDelete: ReferentialAction.Restrict);
                 })
                 .Annotation("MySql:CharSet", "utf8mb4");
@@ -583,6 +637,12 @@ namespace WebApplication1.Migrations
                 column: "RoleId");
 
             migrationBuilder.CreateIndex(
+                name: "IX_Carts_CustomerID",
+                table: "Carts",
+                column: "CustomerID",
+                unique: true);
+
+            migrationBuilder.CreateIndex(
                 name: "IX_Orders_CustomerID",
                 table: "Orders",
                 column: "CustomerID");
@@ -598,9 +658,24 @@ namespace WebApplication1.Migrations
                 column: "ServiceProviderID");
 
             migrationBuilder.CreateIndex(
+                name: "IX_ProviderServices_ServiceID",
+                table: "ProviderServices",
+                column: "ServiceID");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_ProviderServices_ServiceRequestID",
+                table: "ProviderServices",
+                column: "ServiceRequestID");
+
+            migrationBuilder.CreateIndex(
                 name: "IX_Schedules_ServiceID",
                 table: "Schedules",
                 column: "ServiceID");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_ServiceRequests_CartID",
+                table: "ServiceRequests",
+                column: "CartID");
 
             migrationBuilder.CreateIndex(
                 name: "IX_Services_CriteriaID",
@@ -637,11 +712,6 @@ namespace WebApplication1.Migrations
                 table: "Users",
                 column: "NormalizedUserName",
                 unique: true);
-
-            migrationBuilder.CreateIndex(
-                name: "IX_WorkerServices_ServiceID",
-                table: "WorkerServices",
-                column: "ServiceID");
         }
 
         /// <inheritdoc />
@@ -672,6 +742,9 @@ namespace WebApplication1.Migrations
                 name: "Consultants");
 
             migrationBuilder.DropTable(
+                name: "ProviderServices");
+
+            migrationBuilder.DropTable(
                 name: "Schedules");
 
             migrationBuilder.DropTable(
@@ -681,10 +754,16 @@ namespace WebApplication1.Migrations
                 name: "UserReviews");
 
             migrationBuilder.DropTable(
-                name: "WorkerServices");
+                name: "AspNetRoles");
 
             migrationBuilder.DropTable(
-                name: "AspNetRoles");
+                name: "Workers");
+
+            migrationBuilder.DropTable(
+                name: "ServiceRequests");
+
+            migrationBuilder.DropTable(
+                name: "Services");
 
             migrationBuilder.DropTable(
                 name: "ProviderAvailabilities");
@@ -693,22 +772,19 @@ namespace WebApplication1.Migrations
                 name: "Orders");
 
             migrationBuilder.DropTable(
-                name: "Services");
-
-            migrationBuilder.DropTable(
-                name: "Workers");
-
-            migrationBuilder.DropTable(
-                name: "Customers");
-
-            migrationBuilder.DropTable(
-                name: "OrderStatuses");
+                name: "Carts");
 
             migrationBuilder.DropTable(
                 name: "Criterias");
 
             migrationBuilder.DropTable(
                 name: "ServiceProviders");
+
+            migrationBuilder.DropTable(
+                name: "OrderStatuses");
+
+            migrationBuilder.DropTable(
+                name: "Customers");
 
             migrationBuilder.DropTable(
                 name: "Users");

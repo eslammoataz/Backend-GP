@@ -3,8 +3,12 @@ using Microsoft.AspNetCore.Mvc;
 using WebApplication1.Data;
 using WebApplication1.Models;
 using WebApplication1.Models.Entities.Users;
+using WebApplication1.Models.Entities.Users.ServiceProviders;
 using WebApplication1.Models.Requests.AuthRequestsValidations.Registers;
+using WebApplication1.Models.Requests.AvailabilityRequestsValidations;
+using WebApplication1.Models.Requests.ServiceRequestsValidation;
 using WebApplication1.Services;
+using WebApplication1.Services.Abstractions;
 using WebApplication1.Services.EmailService;
 
 namespace WebApplication1.Controllers.UsersControllers
@@ -24,10 +28,12 @@ namespace WebApplication1.Controllers.UsersControllers
         private readonly RoleManager<IdentityRole> roleManager;
         private readonly IEmailConfirmService emailConfirm;
         private readonly IAuthenticationService authenticationService;
+        private readonly ICustomerService customerService;
+
 
         public CustomerController(AppDbContext _context, IConfiguration _config,
                 RoleManager<IdentityRole> _roleManager, UserManager<User> _customerManager,
-                ILogger<CustomerController> logger, IEmailService emailService, IEmailConfirmService emailConfirm, IAuthenticationService authenticationService)
+                ILogger<CustomerController> logger, IEmailService emailService, IEmailConfirmService emailConfirm, IAuthenticationService authenticationService, ICustomerService customerService)
         {
             context = _context;
             config = _config;
@@ -37,6 +43,7 @@ namespace WebApplication1.Controllers.UsersControllers
             this.emailService = emailService;
             this.emailConfirm = emailConfirm;
             this.authenticationService = authenticationService;
+            this.customerService = customerService;
         }
 
 
@@ -62,6 +69,52 @@ namespace WebApplication1.Controllers.UsersControllers
             return Ok(Response);
 
         }
+
+        [HttpPost]
+        [Route("requestService")]
+        public async Task<IActionResult> RequestService(RequestServiceDto requestServiceDto, string customerId)
+        {
+            var Response = await customerService.RequestService(requestServiceDto, customerId);
+
+            if (Response.isError)
+            {
+                return BadRequest(Response);
+            }
+            return Ok(Response);
+
+        }
+
+        [HttpPost]
+        [Route("cancelrequestService")]
+        public async Task<IActionResult> CancelRequestService( string customerId, string requestId)
+        {
+            var Response = await customerService.CancelRequestService(customerId,requestId);
+
+            if (Response.isError)
+            {
+                return BadRequest(Response);
+            }
+            return Ok(Response);
+
+        }
+
+        [HttpGet("getcustomercart/{customerId}")]
+        public async Task<IActionResult> GetCustomerCart(string customerId)
+
+        {
+            var Response = await customerService.GetCustomerCart(customerId);
+
+            if (Response.Payload == null)
+            {
+                return BadRequest(Response.Message);
+            }
+
+            return Ok(Response);
+        }
+
+
+
+
 
 
     }

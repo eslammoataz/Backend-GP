@@ -7,6 +7,9 @@
             Availabilities = new List<ProviderAvailability>();
         }
         public bool isVerified { get; set; }
+
+
+        public List<ProviderService> ProviderServices { get; set; } = new List<ProviderService>();
         public List<ProviderAvailability> Availabilities { get; set; } // Make sure this property is present
         //list<Service>
         //image (profile)

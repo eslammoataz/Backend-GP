@@ -30,5 +30,5 @@ public class Service
     public List<Service> ChildServices { get; set; } = new List<Service>();
 
     public List<Schedule> Schedules { get; set; } = new List<Schedule>();
-    public List<WorkerService> WorkerServices { get; set; } = new List<WorkerService>();
+    public List<ProviderService> ProviderServices { get; set; } = new List<ProviderService>();
 }

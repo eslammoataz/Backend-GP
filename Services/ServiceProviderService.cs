@@ -47,19 +47,19 @@ namespace WebApplication1.Services
 
             var worker = user as Worker;
 
-            if (worker.WorkerServices.Any(ws => ws.ServiceID == serviceId))
+            if (worker.ProviderServices.Any(ws => ws.ServiceID == serviceId))
             {
                 return new Response<string> { isError = true, Message = "Worker already registered for this service" };
             }
 
 
-            var workerService = new WorkerService()
+            var workerService = new ProviderService()
             {
-                WorkerID = workerId,
+                ProviderID = workerId,
                 ServiceID = serviceId,
             };
 
-            context.WorkerServices.Add(workerService);
+            context.ProviderServices.Add(workerService);
             
             await context.SaveChangesAsync();
             return new Response<string> { Message = "Worker registered for Service" };
@@ -69,7 +69,7 @@ namespace WebApplication1.Services
         public async Task<Response<List<object>>> GetRegisteredServices(string workerId)
         {
             var worker = await context.Workers
-                .Include(w => w.WorkerServices)
+                .Include(w => w.ProviderServices)
                     .ThenInclude(ws => ws.Service)
                 .FirstOrDefaultAsync(w => w.Id == workerId);
 
@@ -78,7 +78,7 @@ namespace WebApplication1.Services
                 return new Response<List<object>>(){ isError = true ,Message = "Worker Not Found"};
             }
 
-            var registeredServicesInfo = worker.WorkerServices
+            var registeredServicesInfo = worker.ProviderServices
                 .Select(ws => new
                 {
                     ServiceID = ws.Service.ServiceID,

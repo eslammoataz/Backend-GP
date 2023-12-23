@@ -6,9 +6,6 @@
         public string CriminalRecord { get; set; }
 
 
-
-        public List<WorkerService> WorkerServices { get; set; } = new List<WorkerService>();
-
         //image (fesh we tashbeh)
 
     }

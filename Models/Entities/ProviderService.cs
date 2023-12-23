@@ -3,13 +3,13 @@ using WebApplication1.Models.Entities.Users.ServiceProviders;
 
 namespace WebApplication1.Models.Entities;
 
-public class WorkerService
+public class ProviderService
 {
-    public string WorkerID { get; set; }
+    public string ProviderID { get; set; }
     public string ServiceID { get; set; }
 
-    [ForeignKey("WorkerID")]
-    public Worker Worker { get; set; }
+    [ForeignKey("ProviderID")]
+    public Provider Provider { get; set; }
 
     [ForeignKey("ServiceID")]
     public Service Service { get; set; }

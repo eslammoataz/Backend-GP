@@ -1,5 +1,6 @@
 ﻿using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
+using System.Reflection.Emit;
 using WebApplication1.Models.Entities;
 using WebApplication1.Models.Entities.Users;
 
@@ -22,9 +23,12 @@ namespace WebApplication1.Data
         public DbSet<Service> Services { get; set; }
         //public DbSet<ServiceRelation> SubServices { get; set; }
         public DbSet<Schedule> Schedules { get; set; }
-        public DbSet<WorkerService> WorkerServices { get; set; }
+        public DbSet<ProviderService> ProviderServices { get; set; }
         public DbSet<ProviderAvailability> ProviderAvailabilities { get; set; }
         public DbSet<TimeSlot> Slots { get; set; }
+
+        public DbSet<Cart>Carts { get; set; }
+        public DbSet<ServiceRequest> ServiceRequests { get; set; }
         public DbSet<Order> Orders { get; set; }
         //public DbSet<OrderDetail> OrderDetails { get; set; }
         public DbSet<OrderStatus> OrderStatuses { get; set; }
@@ -86,6 +90,7 @@ namespace WebApplication1.Data
 
 
 
+
             builder.Entity<Service>()
             .HasKey(s => s.ServiceID);
 
@@ -115,18 +120,18 @@ namespace WebApplication1.Data
                 .OnDelete(DeleteBehavior.Restrict); // Choose the appropriate delete behavior
 
 
-            builder.Entity<WorkerService>()
-       .HasKey(ws => new { ws.WorkerID, ws.ServiceID });
+            builder.Entity<ProviderService>()
+       .HasKey(ws => new { ws.ProviderID, ws.ServiceID });
 
-            builder.Entity<WorkerService>()
-                .HasOne(ws => ws.Worker)
-                .WithMany(w => w.WorkerServices)
-                .HasForeignKey(ws => ws.WorkerID)
+            builder.Entity<ProviderService>()
+                .HasOne(ws => ws.Provider)
+                .WithMany(w => w.ProviderServices)
+                .HasForeignKey(ws => ws.ProviderID)
                 .OnDelete(DeleteBehavior.Restrict); // Choose the appropriate delete behavior
 
-            builder.Entity<WorkerService>()
+            builder.Entity<ProviderService>()
                 .HasOne(ws => ws.Service)
-                .WithMany(s => s.WorkerServices)
+                .WithMany(s => s.ProviderServices)
                 .HasForeignKey(ws => ws.ServiceID)
                 .OnDelete(DeleteBehavior.Restrict); // Choose the appropriate delete behavior
 
@@ -158,6 +163,19 @@ namespace WebApplication1.Data
                 .HasOne(ts => ts.ProviderAvailability)
                 .WithMany(pa => pa.Slots)
                 .HasForeignKey(ts => ts.ProviderAvailabilityID);
+
+            builder.Entity<Cart>()
+                .HasMany(sr=>sr.ServiceRequests)
+                .WithOne(c=>c.Cart)
+                .HasForeignKey(c=>c.CartID);
+
+            builder.Entity<Customer>()
+           .HasOne(c => c.Cart)
+           .WithOne(cart => cart.Customer)
+           .HasForeignKey<Cart>(cart => cart.CustomerID);
+             
+
+
 
 
 

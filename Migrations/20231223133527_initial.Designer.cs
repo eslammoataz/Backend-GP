@@ -11,7 +11,7 @@ using WebApplication1.Data;
 namespace WebApplication1.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    [Migration("20231223003749_initial")]
+    [Migration("20231223133527_initial")]
     partial class initial
     {
         /// <inheritdoc />
@@ -185,6 +185,27 @@ namespace WebApplication1.Migrations
                     b.ToTable("Services");
                 });
 
+            modelBuilder.Entity("WebApplication1.Models.Entities.Cart", b =>
+                {
+                    b.Property<string>("CartID")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("varchar(255)");
+
+                    b.Property<string>("CustomerID")
+                        .IsRequired()
+                        .HasColumnType("varchar(255)");
+
+                    b.Property<DateTime?>("LastChangeTime")
+                        .HasColumnType("datetime(6)");
+
+                    b.HasKey("CartID");
+
+                    b.HasIndex("CustomerID")
+                        .IsUnique();
+
+                    b.ToTable("Carts");
+                });
+
             modelBuilder.Entity("WebApplication1.Models.Entities.Criteria", b =>
                 {
                     b.Property<string>("CriteriaID")
@@ -276,6 +297,26 @@ namespace WebApplication1.Migrations
                     b.ToTable("ProviderAvailabilities");
                 });
 
+            modelBuilder.Entity("WebApplication1.Models.Entities.ProviderService", b =>
+                {
+                    b.Property<string>("ProviderID")
+                        .HasColumnType("varchar(255)");
+
+                    b.Property<string>("ServiceID")
+                        .HasColumnType("varchar(255)");
+
+                    b.Property<string>("ServiceRequestID")
+                        .HasColumnType("varchar(255)");
+
+                    b.HasKey("ProviderID", "ServiceID");
+
+                    b.HasIndex("ServiceID");
+
+                    b.HasIndex("ServiceRequestID");
+
+                    b.ToTable("ProviderServices");
+                });
+
             modelBuilder.Entity("WebApplication1.Models.Entities.Schedule", b =>
                 {
                     b.Property<string>("ScheduleID")
@@ -300,6 +341,26 @@ namespace WebApplication1.Migrations
                     b.HasIndex("ServiceID");
 
                     b.ToTable("Schedules");
+                });
+
+            modelBuilder.Entity("WebApplication1.Models.Entities.ServiceRequest", b =>
+                {
+                    b.Property<string>("ServiceRequestID")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("varchar(255)");
+
+                    b.Property<DateTime?>("AddedTime")
+                        .HasColumnType("datetime(6)");
+
+                    b.Property<string>("CartID")
+                        .IsRequired()
+                        .HasColumnType("varchar(255)");
+
+                    b.HasKey("ServiceRequestID");
+
+                    b.HasIndex("CartID");
+
+                    b.ToTable("ServiceRequests");
                 });
 
             modelBuilder.Entity("WebApplication1.Models.Entities.TimeSlot", b =>
@@ -430,21 +491,6 @@ namespace WebApplication1.Migrations
                     b.UseTptMappingStrategy();
                 });
 
-            modelBuilder.Entity("WebApplication1.Models.Entities.WorkerService", b =>
-                {
-                    b.Property<string>("WorkerID")
-                        .HasColumnType("varchar(255)");
-
-                    b.Property<string>("ServiceID")
-                        .HasColumnType("varchar(255)");
-
-                    b.HasKey("WorkerID", "ServiceID");
-
-                    b.HasIndex("ServiceID");
-
-                    b.ToTable("WorkerServices");
-                });
-
             modelBuilder.Entity("WebApplication1.Models.Entities.Users.Admin", b =>
                 {
                     b.HasBaseType("WebApplication1.Models.Entities.Users.User");
@@ -458,6 +504,9 @@ namespace WebApplication1.Migrations
 
                     b.Property<string>("Address")
                         .IsRequired()
+                        .HasColumnType("longtext");
+
+                    b.Property<string>("CartID")
                         .HasColumnType("longtext");
 
                     b.ToTable("Customers", (string)null);
@@ -574,6 +623,17 @@ namespace WebApplication1.Migrations
                     b.Navigation("ParentService");
                 });
 
+            modelBuilder.Entity("WebApplication1.Models.Entities.Cart", b =>
+                {
+                    b.HasOne("WebApplication1.Models.Entities.Users.Customer", "Customer")
+                        .WithOne("Cart")
+                        .HasForeignKey("WebApplication1.Models.Entities.Cart", "CustomerID")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Customer");
+                });
+
             modelBuilder.Entity("WebApplication1.Models.Entities.Order", b =>
                 {
                     b.HasOne("WebApplication1.Models.Entities.Users.Customer", "Customer")
@@ -604,6 +664,29 @@ namespace WebApplication1.Migrations
                     b.Navigation("ServiceProvider");
                 });
 
+            modelBuilder.Entity("WebApplication1.Models.Entities.ProviderService", b =>
+                {
+                    b.HasOne("WebApplication1.Models.Entities.Users.ServiceProviders.Provider", "Provider")
+                        .WithMany("ProviderServices")
+                        .HasForeignKey("ProviderID")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.HasOne("Service", "Service")
+                        .WithMany("ProviderServices")
+                        .HasForeignKey("ServiceID")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.HasOne("WebApplication1.Models.Entities.ServiceRequest", null)
+                        .WithMany("providerServices")
+                        .HasForeignKey("ServiceRequestID");
+
+                    b.Navigation("Provider");
+
+                    b.Navigation("Service");
+                });
+
             modelBuilder.Entity("WebApplication1.Models.Entities.Schedule", b =>
                 {
                     b.HasOne("Service", "Service")
@@ -611,6 +694,17 @@ namespace WebApplication1.Migrations
                         .HasForeignKey("ServiceID");
 
                     b.Navigation("Service");
+                });
+
+            modelBuilder.Entity("WebApplication1.Models.Entities.ServiceRequest", b =>
+                {
+                    b.HasOne("WebApplication1.Models.Entities.Cart", "Cart")
+                        .WithMany("ServiceRequests")
+                        .HasForeignKey("CartID")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Cart");
                 });
 
             modelBuilder.Entity("WebApplication1.Models.Entities.TimeSlot", b =>
@@ -641,25 +735,6 @@ namespace WebApplication1.Migrations
                     b.Navigation("Customer");
 
                     b.Navigation("Order");
-                });
-
-            modelBuilder.Entity("WebApplication1.Models.Entities.WorkerService", b =>
-                {
-                    b.HasOne("Service", "Service")
-                        .WithMany("WorkerServices")
-                        .HasForeignKey("ServiceID")
-                        .OnDelete(DeleteBehavior.Restrict)
-                        .IsRequired();
-
-                    b.HasOne("WebApplication1.Models.Entities.Users.ServiceProviders.Worker", "Worker")
-                        .WithMany("WorkerServices")
-                        .HasForeignKey("WorkerID")
-                        .OnDelete(DeleteBehavior.Restrict)
-                        .IsRequired();
-
-                    b.Navigation("Service");
-
-                    b.Navigation("Worker");
                 });
 
             modelBuilder.Entity("WebApplication1.Models.Entities.Users.Admin", b =>
@@ -720,9 +795,14 @@ namespace WebApplication1.Migrations
                 {
                     b.Navigation("ChildServices");
 
-                    b.Navigation("Schedules");
+                    b.Navigation("ProviderServices");
 
-                    b.Navigation("WorkerServices");
+                    b.Navigation("Schedules");
+                });
+
+            modelBuilder.Entity("WebApplication1.Models.Entities.Cart", b =>
+                {
+                    b.Navigation("ServiceRequests");
                 });
 
             modelBuilder.Entity("WebApplication1.Models.Entities.Criteria", b =>
@@ -735,19 +815,23 @@ namespace WebApplication1.Migrations
                     b.Navigation("Slots");
                 });
 
+            modelBuilder.Entity("WebApplication1.Models.Entities.ServiceRequest", b =>
+                {
+                    b.Navigation("providerServices");
+                });
+
             modelBuilder.Entity("WebApplication1.Models.Entities.Users.Customer", b =>
                 {
+                    b.Navigation("Cart");
+
                     b.Navigation("Orders");
                 });
 
             modelBuilder.Entity("WebApplication1.Models.Entities.Users.ServiceProviders.Provider", b =>
                 {
                     b.Navigation("Availabilities");
-                });
 
-            modelBuilder.Entity("WebApplication1.Models.Entities.Users.ServiceProviders.Worker", b =>
-                {
-                    b.Navigation("WorkerServices");
+                    b.Navigation("ProviderServices");
                 });
 #pragma warning restore 612, 618
         }
