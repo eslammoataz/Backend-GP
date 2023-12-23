@@ -142,6 +142,7 @@ namespace WebApplication1.Controllers.UsersControllers
                 DayOfWeek = previousWeekAvailability.DayOfWeek,
                 AvailabilityDate = currentDate,
                 ServiceProvider = provider,
+                Slots = previousWeekAvailability.Slots
 
             };
 
@@ -151,32 +152,5 @@ namespace WebApplication1.Controllers.UsersControllers
 
     }
 
-    public static class ConvertTime
-    {
-        public static List<slott> MapTimeRangesToTimeSlots(List<TimeRange> timeRanges, string timeFormat = "HH:mm:ss")
-        {
-            List<slott> timeSlots = new List<slott>();
 
-            foreach (var range in timeRanges)
-            {
-
-                slott slot = new slott
-                {
-                    startTime = TimeSpan.Parse(range.startTime),
-                    endTime = TimeSpan.Parse(range.endTime)
-                };
-
-                timeSlots.Add(slot);
-            }
-
-            return timeSlots;
-        }
-
-    }
-
-    public class slott
-    {
-        public TimeSpan startTime { get; set; }
-        public TimeSpan endTime { get; set; }
-    }
 }
