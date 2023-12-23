@@ -1,4 +1,3 @@
-using System;
 using System.Text.Json.Serialization;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Identity;
@@ -85,7 +84,7 @@ internal class Program
         builder.Services.AddScoped<IEmailConfirmService, EmailConfirmService>();
         builder.Services.AddScoped<IAuthenticationService, AuthenticationService>();
         builder.Services.AddScoped<IEmailService, EmailService>();
-        builder.Services.AddScoped<IWorkerServices, WorkerServices>();
+        builder.Services.AddScoped<IServiceProviderService, ServiceProviderService>();
 
         builder.Services.AddTransient<GlobalExceptionHandlingMiddleware>();
 

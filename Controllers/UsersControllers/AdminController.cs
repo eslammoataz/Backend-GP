@@ -46,7 +46,7 @@ namespace WebApplication1.Controllers.UsersControllers
         [HttpGet("getRequests")]
         public IActionResult GetRequests()
         {
-            var unHandeledProviders = context.provider.Where(w => w.isVerified==false).ToList();
+            var unHandeledProviders = context.Provider.Where(w => w.isVerified==false).ToList();
 
             if (unHandeledProviders.Count == 0)
             {
@@ -66,7 +66,7 @@ namespace WebApplication1.Controllers.UsersControllers
         public async Task<IActionResult> ApproveServiceProviderRegister(string WorkerID)
         {
 
-            var provider = context.provider.FirstOrDefault(w => w.Id == WorkerID);
+            var provider = context.Provider.FirstOrDefault(w => w.Id == WorkerID);
             if (provider == null)
             {
                 return BadRequest("Wrong Worker ID");
@@ -95,14 +95,14 @@ namespace WebApplication1.Controllers.UsersControllers
         public async Task<IActionResult> RejectServiceProviderRegister(string WorkerID)
         {
 
-            var provider = context.provider.FirstOrDefault(w => w.Id == WorkerID&& w.isVerified==false);
+            var provider = context.Provider.FirstOrDefault(w => w.Id == WorkerID&& w.isVerified==false);
             if (provider == null)
             {
                 return BadRequest("Wrong Worker ID");
             }
 
            
-            context.provider.Remove(provider);
+            context.Provider.Remove(provider);
             context.SaveChanges();
 
             //Add Token to Verify the email....

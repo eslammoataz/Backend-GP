@@ -2,7 +2,11 @@
 {
     public abstract class Provider : User
     {
-        public bool isVerified {  get; set; }
+        public Provider()
+        {
+            Availabilities = new List<ProviderAvailability>();
+        }
+        public bool isVerified { get; set; }
         public List<ProviderAvailability> Availabilities { get; set; } // Make sure this property is present
         //list<Service>
         //image (profile)

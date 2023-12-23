@@ -1,6 +1,5 @@
 ﻿using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
-using System.Reflection.Emit;
 using WebApplication1.Models.Entities;
 using WebApplication1.Models.Entities.Users;
 
@@ -13,7 +12,7 @@ namespace WebApplication1.Data
     {
 
         public DbSet<Customer> Customers { get; set; }
-        public DbSet<Provider> provider { get; set; }
+        public DbSet<Provider> Provider { get; set; }
 
         public DbSet<Worker> Workers { get; set; }
         public DbSet<Consultant> Consultants { get; set; }
@@ -25,7 +24,7 @@ namespace WebApplication1.Data
         public DbSet<Schedule> Schedules { get; set; }
         public DbSet<WorkerService> WorkerServices { get; set; }
         public DbSet<ProviderAvailability> ProviderAvailabilities { get; set; }
-        public DbSet<TimeSlot>Slots { get; set; }   
+        public DbSet<TimeSlot> Slots { get; set; }
         public DbSet<Order> Orders { get; set; }
         //public DbSet<OrderDetail> OrderDetails { get; set; }
         public DbSet<OrderStatus> OrderStatuses { get; set; }
@@ -141,6 +140,25 @@ namespace WebApplication1.Data
                 .HasOne(ur => ur.Order)
                 .WithMany()
                 .HasForeignKey(ur => ur.OrderID);
+
+
+
+            //builder.Entity<Provider>()
+            //    .HasMany(a => a.Availabilities)
+            //    .WithOne(a => a.ServiceProvider)
+            //    .HasForeignKey(a => a.ServiceProviderID).
+            //    OnDelete(DeleteBehavior.Cascade);
+
+            builder.Entity<ProviderAvailability>()
+                .HasOne(wa => wa.ServiceProvider)
+                .WithMany(w => w.Availabilities)
+                .HasForeignKey(wa => wa.ServiceProviderID);
+
+            builder.Entity<TimeSlot>()
+                .HasOne(ts => ts.ProviderAvailability)
+                .WithMany(pa => pa.Slots)
+                .HasForeignKey(ts => ts.ProviderAvailabilityID);
+
 
 
         }

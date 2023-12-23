@@ -10,28 +10,16 @@
             </summary>
             <remarks>Returns a list of all services.</remarks>
         </member>
-        <member name="T:WebApplication1.Migrations.Intial">
+        <member name="T:WebApplication1.Migrations.initial">
             <inheritdoc />
         </member>
-        <member name="M:WebApplication1.Migrations.Intial.Up(Microsoft.EntityFrameworkCore.Migrations.MigrationBuilder)">
+        <member name="M:WebApplication1.Migrations.initial.Up(Microsoft.EntityFrameworkCore.Migrations.MigrationBuilder)">
             <inheritdoc />
         </member>
-        <member name="M:WebApplication1.Migrations.Intial.Down(Microsoft.EntityFrameworkCore.Migrations.MigrationBuilder)">
+        <member name="M:WebApplication1.Migrations.initial.Down(Microsoft.EntityFrameworkCore.Migrations.MigrationBuilder)">
             <inheritdoc />
         </member>
-        <member name="M:WebApplication1.Migrations.Intial.BuildTargetModel(Microsoft.EntityFrameworkCore.ModelBuilder)">
-            <inheritdoc />
-        </member>
-        <member name="T:WebApplication1.Migrations.ModifyAvailabilities">
-            <inheritdoc />
-        </member>
-        <member name="M:WebApplication1.Migrations.ModifyAvailabilities.Up(Microsoft.EntityFrameworkCore.Migrations.MigrationBuilder)">
-            <inheritdoc />
-        </member>
-        <member name="M:WebApplication1.Migrations.ModifyAvailabilities.Down(Microsoft.EntityFrameworkCore.Migrations.MigrationBuilder)">
-            <inheritdoc />
-        </member>
-        <member name="M:WebApplication1.Migrations.ModifyAvailabilities.BuildTargetModel(Microsoft.EntityFrameworkCore.ModelBuilder)">
+        <member name="M:WebApplication1.Migrations.initial.BuildTargetModel(Microsoft.EntityFrameworkCore.ModelBuilder)">
             <inheritdoc />
         </member>
     </members>

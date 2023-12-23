@@ -1,12 +1,10 @@
 ﻿using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
-using Org.BouncyCastle.Crypto;
 using WebApplication1.Data;
 using WebApplication1.Models;
 using WebApplication1.Models.Entities.Users;
 using WebApplication1.Models.Entities.Users.ServiceProviders;
 using WebApplication1.Models.Requests.AuthRequestsValidations.Registers;
-using WebApplication1.Services;
 using WebApplication1.Services.EmailService;
 
 namespace WebApplication1.Controllers.UsersControllers
@@ -23,13 +21,13 @@ namespace WebApplication1.Controllers.UsersControllers
         private readonly ILogger<CustomerController> logger;
         private readonly IEmailService emailService;
         private readonly Services.IAuthenticationService authenticationService;
-        private readonly IWorkerServices workerServices;
+        private readonly Services.IServiceProviderService workerServices;
         private readonly RoleManager<IdentityRole> roleManager;
 
 
         public WorkerController(AppDbContext _context, IConfiguration _config,
                 RoleManager<IdentityRole> _roleManager, UserManager<User> _customerManager,
-                ILogger<CustomerController> logger, IEmailService emailService, Services.IAuthenticationService authenticationService, IWorkerServices workerServices)
+                ILogger<CustomerController> logger, IEmailService emailService, Services.IAuthenticationService authenticationService, Services.IServiceProviderService workerServices)
         {
             context = _context;
             config = _config;
@@ -55,7 +53,7 @@ namespace WebApplication1.Controllers.UsersControllers
                 FirstName = registrationDto.FirstName,
                 CriminalRecord = registrationDto.CriminalRecord,
                 NationalID = registrationDto.NationalID,
-                isVerified= false
+                isVerified = false
                 //services 
                 //photos
             };

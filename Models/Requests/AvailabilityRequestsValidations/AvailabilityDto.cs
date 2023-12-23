@@ -5,16 +5,34 @@ namespace WebApplication1.Models.Requests.AvailabilityRequestsValidations
 {
     public class AvailabilityDto
     {
-        
-        [Required(ErrorMessage = "DayOfWeek is Required ")]
-        [EnumDataType(typeof(DaysOFTheWeek))]
-        public DaysOFTheWeek DayOfWeek { get; set; }
+
+        [Required(ErrorMessage = "Day is Required")]
+        [DayOfWeekValidation] // Apply custom validation attribute
+        public string DayOfWeek { get; set; }
 
 
         public DateTime? AvailabilityDate { get; set; }
 
 
         [Required(ErrorMessage = "Time slots is Required ")]
-        public List<TimeSlotDto> Slots { get; set; } = new List<TimeSlotDto>();
+        public List<TimeRange> Slots { get; set; } = new List<TimeRange>();
+
+    }
+
+    public class DayOfWeekValidationAttribute : ValidationAttribute
+    {
+        protected override ValidationResult IsValid(object value, ValidationContext validationContext)
+        {
+            if (value is string)
+            {
+                string day = value.ToString();
+                if (!Enum.IsDefined(typeof(DayOfWeek), day))
+                {
+                    return new ValidationResult("The 'Day' property must be a valid day of the week.");
+                }
+            }
+
+            return ValidationResult.Success;
+        }
     }
 }

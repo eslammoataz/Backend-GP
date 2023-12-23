@@ -258,8 +258,9 @@ namespace WebApplication1.Migrations
                     b.Property<DateTime?>("AvailabilityDate")
                         .HasColumnType("datetime(6)");
 
-                    b.Property<int>("DayOfWeek")
-                        .HasColumnType("int");
+                    b.Property<string>("DayOfWeek")
+                        .IsRequired()
+                        .HasColumnType("longtext");
 
                     b.Property<string>("ServiceProviderID")
                         .IsRequired()

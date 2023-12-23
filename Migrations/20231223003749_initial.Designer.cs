@@ -11,8 +11,8 @@ using WebApplication1.Data;
 namespace WebApplication1.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    [Migration("20231221150525_Intial")]
-    partial class Intial
+    [Migration("20231223003749_initial")]
+    partial class initial
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -252,6 +252,30 @@ namespace WebApplication1.Migrations
                         });
                 });
 
+            modelBuilder.Entity("WebApplication1.Models.Entities.ProviderAvailability", b =>
+                {
+                    b.Property<string>("ProviderAvailabilityID")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("varchar(255)");
+
+                    b.Property<DateTime?>("AvailabilityDate")
+                        .HasColumnType("datetime(6)");
+
+                    b.Property<string>("DayOfWeek")
+                        .IsRequired()
+                        .HasColumnType("longtext");
+
+                    b.Property<string>("ServiceProviderID")
+                        .IsRequired()
+                        .HasColumnType("varchar(255)");
+
+                    b.HasKey("ProviderAvailabilityID");
+
+                    b.HasIndex("ServiceProviderID");
+
+                    b.ToTable("ProviderAvailabilities");
+                });
+
             modelBuilder.Entity("WebApplication1.Models.Entities.Schedule", b =>
                 {
                     b.Property<string>("ScheduleID")
@@ -276,6 +300,32 @@ namespace WebApplication1.Migrations
                     b.HasIndex("ServiceID");
 
                     b.ToTable("Schedules");
+                });
+
+            modelBuilder.Entity("WebApplication1.Models.Entities.TimeSlot", b =>
+                {
+                    b.Property<string>("TimeSlotID")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("varchar(255)");
+
+                    b.Property<TimeSpan>("EndTime")
+                        .HasColumnType("time(6)");
+
+                    b.Property<string>("ProviderAvailabilityID")
+                        .IsRequired()
+                        .HasColumnType("varchar(255)");
+
+                    b.Property<TimeSpan>("StartTime")
+                        .HasColumnType("time(6)");
+
+                    b.Property<bool?>("enable")
+                        .HasColumnType("tinyint(1)");
+
+                    b.HasKey("TimeSlotID");
+
+                    b.HasIndex("ProviderAvailabilityID");
+
+                    b.ToTable("Slots");
                 });
 
             modelBuilder.Entity("WebApplication1.Models.Entities.UserReview", b =>
@@ -378,39 +428,6 @@ namespace WebApplication1.Migrations
                     b.ToTable("Users", (string)null);
 
                     b.UseTptMappingStrategy();
-                });
-
-            modelBuilder.Entity("WebApplication1.Models.Entities.WorkerAvailability", b =>
-                {
-                    b.Property<string>("WorkerAvailabilityID")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("varchar(255)");
-
-                    b.Property<string>("DayOfWeek")
-                        .IsRequired()
-                        .HasColumnType("longtext");
-
-                    b.Property<TimeSpan>("EndTime")
-                        .HasColumnType("time(6)");
-
-                    b.Property<string>("ServiceID")
-                        .IsRequired()
-                        .HasColumnType("varchar(255)");
-
-                    b.Property<TimeSpan>("StartTime")
-                        .HasColumnType("time(6)");
-
-                    b.Property<string>("WorkerID")
-                        .IsRequired()
-                        .HasColumnType("varchar(255)");
-
-                    b.HasKey("WorkerAvailabilityID");
-
-                    b.HasIndex("ServiceID");
-
-                    b.HasIndex("WorkerID");
-
-                    b.ToTable("WorkerAvailabilities");
                 });
 
             modelBuilder.Entity("WebApplication1.Models.Entities.WorkerService", b =>
@@ -576,6 +593,17 @@ namespace WebApplication1.Migrations
                     b.Navigation("OrderStatus");
                 });
 
+            modelBuilder.Entity("WebApplication1.Models.Entities.ProviderAvailability", b =>
+                {
+                    b.HasOne("WebApplication1.Models.Entities.Users.ServiceProviders.Provider", "ServiceProvider")
+                        .WithMany("Availabilities")
+                        .HasForeignKey("ServiceProviderID")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("ServiceProvider");
+                });
+
             modelBuilder.Entity("WebApplication1.Models.Entities.Schedule", b =>
                 {
                     b.HasOne("Service", "Service")
@@ -583,6 +611,17 @@ namespace WebApplication1.Migrations
                         .HasForeignKey("ServiceID");
 
                     b.Navigation("Service");
+                });
+
+            modelBuilder.Entity("WebApplication1.Models.Entities.TimeSlot", b =>
+                {
+                    b.HasOne("WebApplication1.Models.Entities.ProviderAvailability", "ProviderAvailability")
+                        .WithMany("Slots")
+                        .HasForeignKey("ProviderAvailabilityID")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("ProviderAvailability");
                 });
 
             modelBuilder.Entity("WebApplication1.Models.Entities.UserReview", b =>
@@ -602,25 +641,6 @@ namespace WebApplication1.Migrations
                     b.Navigation("Customer");
 
                     b.Navigation("Order");
-                });
-
-            modelBuilder.Entity("WebApplication1.Models.Entities.WorkerAvailability", b =>
-                {
-                    b.HasOne("Service", "Service")
-                        .WithMany()
-                        .HasForeignKey("ServiceID")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.HasOne("WebApplication1.Models.Entities.Users.ServiceProviders.Worker", "Worker")
-                        .WithMany("Availabilities")
-                        .HasForeignKey("WorkerID")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("Service");
-
-                    b.Navigation("Worker");
                 });
 
             modelBuilder.Entity("WebApplication1.Models.Entities.WorkerService", b =>
@@ -710,15 +730,23 @@ namespace WebApplication1.Migrations
                     b.Navigation("Services");
                 });
 
+            modelBuilder.Entity("WebApplication1.Models.Entities.ProviderAvailability", b =>
+                {
+                    b.Navigation("Slots");
+                });
+
             modelBuilder.Entity("WebApplication1.Models.Entities.Users.Customer", b =>
                 {
                     b.Navigation("Orders");
                 });
 
-            modelBuilder.Entity("WebApplication1.Models.Entities.Users.ServiceProviders.Worker", b =>
+            modelBuilder.Entity("WebApplication1.Models.Entities.Users.ServiceProviders.Provider", b =>
                 {
                     b.Navigation("Availabilities");
+                });
 
+            modelBuilder.Entity("WebApplication1.Models.Entities.Users.ServiceProviders.Worker", b =>
+                {
                     b.Navigation("WorkerServices");
                 });
 #pragma warning restore 612, 618

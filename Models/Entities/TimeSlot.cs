@@ -1,5 +1,5 @@
-﻿using System.ComponentModel.DataAnnotations.Schema;
-using System.ComponentModel.DataAnnotations;
+﻿using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
 
 namespace WebApplication1.Models.Entities
 {
@@ -13,9 +13,9 @@ namespace WebApplication1.Models.Entities
 
         public TimeSpan? Duration => EndTime - StartTime;
 
-        public bool? enable {  get; set; }
+        public bool? enable { get; set; }
 
-         // Foreign key to relate TimeSlot to ProviderAvailability
+        // Foreign key to relate TimeSlot to ProviderAvailability
         public string ProviderAvailabilityID { get; set; }
 
         [ForeignKey("ProviderAvailabilityID")]
