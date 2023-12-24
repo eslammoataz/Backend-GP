@@ -68,16 +68,13 @@ namespace WebApplication1.Controllers
         {
             var Response = await authenticationService.Login(loginRequest);
             
-            // Create an instance of HttpClient
-            using (var httpClient = new HttpClient())
-            {
-                httpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", "test");
-            }
-
+            
             if (Response.isError)
             {
                 return Unauthorized(Response);
             }
+            
+            // Add the token to the headers
             return Ok(Response);
 
         }

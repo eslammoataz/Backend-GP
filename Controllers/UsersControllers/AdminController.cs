@@ -1,22 +1,9 @@
-﻿using System.Security.Claims;
-using Microsoft.AspNetCore.Http;
-using Microsoft.AspNetCore.Mvc;
-using static Org.BouncyCastle.Math.EC.ECCurve;
+﻿using Microsoft.AspNetCore.Mvc;
 using WebApplication1.Data;
-using WebApplication1.Helpers;
-using WebApplication1.Models;
 using Microsoft.AspNetCore.Identity;
-using Microsoft.EntityFrameworkCore;
-using System.Data;
 using WebApplication1.Models.Entities.Users;
-using WebApplication1.Models.Requests.AuthRequests;
-using WebApplication1.Models.Requests.AuthRequestsValidations.Registers;
-using Microsoft.AspNetCore.Routing;
 using WebApplication1.Models.Emails;
-using WebApplication1.ServicesWebApplication1.Services;
 using WebApplication1.Services.EmailService;
-using System;
-using WebApplication1.Models.Entities.Users.ServiceProviders;
 
 namespace WebApplication1.Controllers.UsersControllers
 {

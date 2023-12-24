@@ -1,7 +1,10 @@
+using System.Text;
 using System.Text.Json.Serialization;
 using Microsoft.AspNetCore.Authentication.Cookies;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.IdentityModel.Tokens;
 using WebApplication1.Data;
 using WebApplication1.Middlewares;
 using WebApplication1.Models.Entities.Users;
@@ -20,37 +23,56 @@ internal class Program
 
         builder.Logging.AddConsole();
 
-        //builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
-        // .AddJwtBearer(options =>
+        // builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
+        //  .AddJwtBearer(options =>
+        //  {
+        //      options.TokenValidationParameters = new TokenValidationParameters
+        //      {
+        //          ValidateIssuer = true,
+        //          ValidateAudience = true,
+        //          ValidateLifetime = true,
+        //          ValidateIssuerSigningKey = true,
+        //          ValidIssuer = jwtIssuer,
+        //          ValidAudience = jwtIssuer,
+        //          IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(jwtKey))
+        //      };
+        //  });
+
+
+        // builder.Services.AddAuthentication(options =>
         // {
-        //     options.TokenValidationParameters = new TokenValidationParameters
-        //     {
-        //         ValidateIssuer = true,
-        //         ValidateAudience = true,
-        //         ValidateLifetime = true,
-        //         ValidateIssuerSigningKey = true,
-        //         ValidIssuer = jwtIssuer,
-        //         ValidAudience = jwtIssuer,
-        //         IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(jwtKey))
-        //     };
-        // });
-
-
-        builder.Services.AddAuthentication(options =>
-        {
-            options.DefaultScheme = CookieAuthenticationDefaults.AuthenticationScheme;
-            options.DefaultSignInScheme = CookieAuthenticationDefaults.AuthenticationScheme;
-            options.DefaultAuthenticateScheme = CookieAuthenticationDefaults.AuthenticationScheme;
-            options.DefaultChallengeScheme = CookieAuthenticationDefaults.AuthenticationScheme;
-        })
-        .AddCookie(options =>
-        {
-            options.Cookie.Name = "MyCookie";
-            options.Cookie.SameSite = SameSiteMode.Lax;
-            options.Cookie.HttpOnly = true;
-            options.ExpireTimeSpan = TimeSpan.FromMinutes(60);
-            options.SlidingExpiration = true;
-        });
+        //     options.DefaultScheme = CookieAuthenticationDefaults.AuthenticationScheme;
+        //     options.DefaultSignInScheme = CookieAuthenticationDefaults.AuthenticationScheme;
+        //     options.DefaultAuthenticateScheme = CookieAuthenticationDefaults.AuthenticationScheme;
+        //     options.DefaultChallengeScheme = CookieAuthenticationDefaults.AuthenticationScheme;
+        // })
+        //Registering Identity 
+        var Configuration = builder.Configuration;
+        
+        builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
+            .AddJwtBearer(options =>
+            {
+                string jwtIssuer = Configuration.GetSection("Jwt:Issuer").Value; 
+                string jwtKey = Configuration.GetSection("Jwt:Key").Value;
+                options.TokenValidationParameters = new TokenValidationParameters
+                {
+                    ValidateIssuer = true,
+                    ValidateAudience = true,
+                    ValidateLifetime = true,
+                    ValidateIssuerSigningKey = true,
+                    ValidIssuer = jwtIssuer,
+                    ValidAudience = jwtIssuer,
+                    IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(jwtKey))
+                };
+            }) .AddCookie(options =>
+            {
+                options.Cookie.Name = "MyCookie";
+                options.Cookie.SameSite = SameSiteMode.Lax;
+                options.Cookie.HttpOnly = true;
+                options.ExpireTimeSpan = TimeSpan.FromMinutes(60);
+                options.SlidingExpiration = true;
+            });
+        
 
         //Jwt configuration ends here
 
@@ -65,8 +87,7 @@ internal class Program
         });
 
 
-        //Registering Identity 
-        var Configuration = builder.Configuration;
+
 
         builder.Services.AddSingleton(Configuration);
 

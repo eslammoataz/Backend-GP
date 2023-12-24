@@ -83,7 +83,7 @@ namespace WebApplication1.Services
             var tokenString = JWT.generateToken(claims, config);
 
             // Add the token to the headers
-            httpContextAccessor.HttpContext.Request.Headers.Add("Authorization", $"Bearer {tokenString}");
+            httpContextAccessor.HttpContext.Request.Headers.Add("x-Authorization", $"Bearer {tokenString}");
 
             httpContextAccessor.HttpContext.Response.Cookies.Append("Auth", tokenString, new CookieOptions
             {
@@ -138,9 +138,7 @@ namespace WebApplication1.Services
 
             var tokenString = JWT.generateToken(claims, config);
 
-
-            // Add the token to the headers
-            httpContextAccessor.HttpContext.Request.Headers.Add("Authorization", $"Bearer {tokenString}");
+            httpContextAccessor.HttpContext.Response.Headers.Add("x-Authorization", $" Bearer {tokenString}");
             
             // Set the token in a cookie
             httpContextAccessor.HttpContext.Response.Cookies.Append("Auth", tokenString, new CookieOptions
