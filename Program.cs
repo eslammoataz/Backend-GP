@@ -77,14 +77,18 @@ internal class Program
         //Jwt configuration ends here
 
         // allowing CORS
-        builder.Services.AddCors(options =>
-        {
-            options.AddDefaultPolicy(
-                policy =>
-                {
-                    policy.AllowAnyOrigin().AllowAnyHeader().AllowAnyMethod();
-                });
-        });
+        builder.Services.AddCors(feature =>
+            feature.AddPolicy(
+                "CorsPolicy",
+                apiPolicy => apiPolicy
+                    //.AllowAnyOrigin()
+                    .WithOrigins("http://localhost:3000")
+                    .AllowAnyHeader()
+                    .AllowAnyMethod()
+                    // .SetIsOriginAllowed(host => true)
+                    .AllowCredentials()
+                    .WithExposedHeaders()
+            ));
 
 
 
@@ -174,16 +178,11 @@ internal class Program
         {
             app.UseSwagger();
             app.UseSwaggerUI();
-            //app.UseSwaggerUI(c =>
-            //{
-            //    c.SwaggerEndpoint("/swagger/v1/swagger.json", "Your API V1");
-            //    // Set the Swagger UI to the application's root path
-            //    c.RoutePrefix = string.Empty;
-            //});
         }
 
         app.UseHttpsRedirection();
-        app.UseCors();
+        app.UseCors("CorsPolicy");
+
 
         app.UseAuthentication();
 
