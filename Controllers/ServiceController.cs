@@ -1,6 +1,7 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using WebApplication1.Data;
+using WebApplication1.Models;
 using WebApplication1.Models.Requests.ServiceRequestsValidation;
 
 namespace WebApplication1.Controllers
@@ -108,8 +109,37 @@ namespace WebApplication1.Controllers
 
             return Ok(service);
         }
+
+        [HttpGet("GetAllServices")]
+        public IActionResult GetAllServices()
+        {
+
+            var service = _context.Services.Include(s => s.ChildServices).Select(s => new
+            {
+                s.ServiceID,
+                s.ServiceName,
+                s.AvailabilityStatus,
+                Criteria = s.Criteria.CriteriaName,
+                ChildServices = s.ChildServices.Select(cs => new
+                {
+                    cs.ServiceName
+                }).ToList(),
+
+            }).ToList();
+
+
+            if (service.Any())
+            {
+                return Ok(service);
+            }
+            else
+            {
+                return BadRequest("No services to retrive");
+
+            }
+        }
+
+
     }
-
-
-
 }
+

@@ -2,10 +2,13 @@
 using Microsoft.EntityFrameworkCore;
 using WebApplication1.Data;
 using WebApplication1.Models;
+using WebApplication1.Models.Emails;
 using WebApplication1.Models.Entities;
 using WebApplication1.Models.Entities.Users;
 using WebApplication1.Models.Entities.Users.ServiceProviders;
 using WebApplication1.Models.Requests.AvailabilityRequestsValidations;
+using WebApplication1.Services.EmailService;
+using WebApplication1.ServicesWebApplication1.Services;
 
 namespace WebApplication1.Services
 {
@@ -15,21 +18,49 @@ namespace WebApplication1.Services
         private readonly ILogger<ServiceProviderService> logger;
         private readonly UserManager<User> userManager;
         private readonly RoleManager<IdentityRole> roleManager;
+        private readonly IEmailService emailService;
         private string workerId;
         private string serviceId;
 
 
-        public ServiceProviderService(AppDbContext context, ILogger<ServiceProviderService> logger, UserManager<User> userManager, RoleManager<IdentityRole> roleManager)
+        public ServiceProviderService(AppDbContext context, ILogger<ServiceProviderService> logger, UserManager<User> userManager, RoleManager<IdentityRole> roleManager, IEmailService emailService)
         {
             this.context = context;
             this.logger = logger;
             this.userManager = userManager;
             this.roleManager = roleManager;
+            this.emailService = emailService;
         }
 
 
+        public async Task<Response<Object>> GetAllServiceProviders()
+        {
+             var serviceProviders = context.Provider
+                .Where(p => p.isVerified == true)
+                .Select(p => new
+                {
+                    p.Id,
+                    p.FirstName,
+                    p.LastName,
+                    ProviderServices = p.ProviderServices.Select(ps => new
+                    {
+                        ps.ServiceID,
+                        ps.Price
+                    }).ToList(),
+                })
+                .ToList();
 
-        public async Task<Response<string>> RegisterService(string workerId, string serviceId)
+            if (serviceProviders.Any())
+            {
+                return new Response<object> { isError = false, Message = "Service Providers retrieved", Payload = serviceProviders };
+            }
+            else
+            {
+                return new Response<object> { isError = true, Message = "No Service Prividers available", Payload = null };
+
+            }
+        }
+        public async Task<Response<string>> RegisterService(string workerId, string serviceId, decimal Price)
         {
             var user = await userManager.FindByIdAsync(workerId);
 
@@ -57,6 +88,7 @@ namespace WebApplication1.Services
             {
                 ProviderID = workerId,
                 ServiceID = serviceId,
+                Price = Price
             };
 
             context.ProviderServices.Add(workerService);
@@ -197,6 +229,127 @@ namespace WebApplication1.Services
             return timeSlots;
         }
 
+        public async Task<Response<Object>> ShowOrderDetails(string orderId)
+        {
+            var order = context.Orders
+               .Include(o => o.Customer)
+               .ThenInclude(c=>c.Cart)
+               .ThenInclude(c=>c.ServiceRequests)
+               .ThenInclude(c=>c.providerService)
+               .FirstOrDefault(o => o.OrderID == orderId);
+            if ( order == null )
+            {
+                return new Response<object> { isError = true, Message = "Order or related data not found" };
+            }
+            var customer = order.Customer;
+
+
+            var response = new
+            {
+                CustomerData = new
+                {
+                    customer.FirstName,
+                    customer.Address,
+                    // Add other customer properties as needed
+                },
+                ServiceData = customer.Cart.ServiceRequests.Select(s => new
+                {
+                    ServiceId = s.providerService.Service.ServiceName
+                }).ToList<object>(),
+            };
+            return new Response<Object> { isError = false, Message = "Order Retrieved" ,Payload=response};
+
+        }
+
+
+            public async Task<Response<List<object>>> ApproveOrder (string orderId)
+            {
+            var order = context.Orders
+             .Include(o => o.Customer)
+             .FirstOrDefault(o => o.OrderID == orderId);
+            if (order == null)
+            {
+                return new Response<List<object>> { isError = true, Message = "Order Not Found" };
+            }
+            var customer = order.Customer;
+
+            //al a7sn yeb2a enum bs ana 7alian bzwdha fe al db
+            order.OrderStatusID = "2";
+            order.OrderStatus = context.OrderStatuses.FirstOrDefault(o => o.StatusName == "Approved");
+
+            context.SaveChanges();
+
+            var message = new EmailDto(customer.Email!, "Sarvicny: Approved", "Your order is approved seccessfully");
+
+            emailService.SendEmail(message);
+            
+            //Remove Cart when Confirm done 
+           // context.Remove(customer.Cart.ServiceRequests);
+
+            context.SaveChanges();
+
+            return new Response<List<object>> { isError = false, Message = "Order is approved" };
+
+
+        }
+        public async Task<Response<List<object>>> RejectOrder(string orderId)
+        {
+            var order = context.Orders
+                .Include(o=>o.Customer)
+                .FirstOrDefault(o => o.OrderID == orderId);
+            if (order == null)
+            {
+                return new Response<List<object>> { isError = true, Message = "Order Not Found" };
+            }
+            var customer= order.Customer;
+
+            //al a7sn yeb2a enum bs ana 7alian bzwdha fe al db
+            order.OrderStatusID = "3";
+            order.OrderStatus = context.OrderStatuses.FirstOrDefault(o => o.StatusName == "Rejected");
+            context.SaveChanges();
+
+            var message = new EmailDto(customer.Email!, "Sarvicny: Rejected", "Your order is Rejected ");
+
+            emailService.SendEmail(message);
+
+            ///ReAsignnnnnn??
+            return new Response<List<object>> { isError = false, Message = "Order is rejected" };
+
+        }
+        public async Task<Response<Object>> CancelOrder(string orderId)
+        {
+            var order = context.Orders
+                .Include(o => o.Customer)
+                .FirstOrDefault(o => o.OrderID == orderId);
+            if (order == null)
+            {
+                return new Response<object> { isError = true, Message = "Order Not Found" };
+            }
+            if (order.OrderStatusID == "2") //Approved
+            {
+
+                //al a7sn yeb2a enum bs ana 7alian bzwdha fe al db
+                order.OrderStatusID = "4";
+                order.OrderStatus = context.OrderStatuses.FirstOrDefault(o => o.StatusName == "Canceled");
+            }
+            else
+            {
+                return new Response<object> { isError = true, Message = "Order was not originally approved to be Canceled" };
+            }
+            var customer = order.Customer;
+
+            var message = new EmailDto(customer.Email!, "Sarvicny: Canceled", "Unfortunally your order is canceled");
+
+            emailService.SendEmail(message);
+
+            context.SaveChanges();
+
+            ///ReAsignnnnnn??
+            
+
+            return new Response<object> { isError = false, Message = "Order is canceled" };
+
+        }
 
 
     }

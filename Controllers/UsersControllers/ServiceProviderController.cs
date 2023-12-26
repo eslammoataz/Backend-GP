@@ -5,6 +5,7 @@ using WebApplication1.Models.Entities;
 using WebApplication1.Models.Entities.Users;
 using WebApplication1.Models.Requests.AvailabilityRequestsValidations;
 using WebApplication1.Services;
+using WebApplication1.Services.Abstractions;
 using WebApplication1.Services.EmailService;
 
 namespace WebApplication1.Controllers.UsersControllers
@@ -113,43 +114,107 @@ namespace WebApplication1.Controllers.UsersControllers
         }
 
 
+        //[HttpPost]
+        //[Route("SetAvailabilityAsPrev")]
+        //public IActionResult SetServiceProviderAvailabilityAsPrev(string providerId)
+
+        //{
+        //    var provider = context.Provider.FirstOrDefault(s => s.Id == providerId);
+        //    if (provider == null)
+        //    {
+        //        return BadRequest("worker Id is not valid");
+        //    }
+        //    DateTime currentDate = DateTime.Now;
+        //    DateTime previousWeekStart = currentDate.AddDays(-7);
+        //    DateTime previousWeekEnd = currentDate.AddDays(-1);
+
+
+        //    var previousWeekAvailability = context.ProviderAvailabilities
+        //        .FirstOrDefault(pa => pa.AvailabilityDate >= previousWeekStart && pa.AvailabilityDate <= previousWeekEnd);
+
+        //    if (previousWeekAvailability == null)
+        //    {
+        //        return BadRequest("ther is no data in the previous week");
+        //    }
+
+        //    var newavailability = new ProviderAvailability
+        //    {
+        //        ServiceProviderID = provider.Id,
+        //        DayOfWeek = previousWeekAvailability.DayOfWeek,
+        //        AvailabilityDate = currentDate,
+        //        ServiceProvider = provider,
+        //        Slots = previousWeekAvailability.Slots
+
+        //    };
+
+        //    context.ProviderAvailabilities.Add(newavailability);
+        //    return Ok();
+        //    // return CreatedAtAction(nameof(GetServiceProviderAvailabilityAsync), new { id = newavailability.ServiceProvider }, newavailability);
+        //}
         [HttpPost]
-        [Route("SetAvailabilityAsPrev")]
-        public IActionResult SetServiceProviderAvailabilityAsPrev(string providerId)
-
+        [Route("approveorder")]
+        public async Task<IActionResult> ApproveOrder( string orderId)
         {
-            var provider = context.Provider.FirstOrDefault(s => s.Id == providerId);
-            if (provider == null)
+            var Response = await serviceProviderService.ApproveOrder(orderId);
+
+            if (Response.isError)
             {
-                return BadRequest("worker Id is not valid");
+                return BadRequest(Response);
             }
-            DateTime currentDate = DateTime.Now;
-            DateTime previousWeekStart = currentDate.AddDays(-7);
-            DateTime previousWeekEnd = currentDate.AddDays(-1);
-
-
-            var previousWeekAvailability = context.ProviderAvailabilities
-                .FirstOrDefault(pa => pa.AvailabilityDate >= previousWeekStart && pa.AvailabilityDate <= previousWeekEnd);
-
-            if (previousWeekAvailability == null)
-            {
-                return BadRequest("ther is no data in the previous week");
-            }
-
-            var newavailability = new ProviderAvailability
-            {
-                ServiceProviderID = provider.Id,
-                DayOfWeek = previousWeekAvailability.DayOfWeek,
-                AvailabilityDate = currentDate,
-                ServiceProvider = provider,
-                Slots = previousWeekAvailability.Slots
-
-            };
-
-            context.ProviderAvailabilities.Add(newavailability);
-            return Ok();
-            // return CreatedAtAction(nameof(GetServiceProviderAvailabilityAsync), new { id = newavailability.ServiceProvider }, newavailability);
+            return Ok(Response);
         }
+
+        [HttpPost]
+        [Route("rejectorder")]
+        public async Task<IActionResult> RejectOrder( string orderId)
+        {
+            var Response = await serviceProviderService.RejectOrder(orderId);
+
+            if (Response.isError)
+            {
+                return BadRequest(Response);
+            }
+            return Ok(Response);
+        }
+
+        [HttpPost]
+        [Route("Cancelorder")]
+        public async Task<IActionResult> CancelOrder(string orderId)
+        {
+            var Response = await serviceProviderService.CancelOrder(orderId);
+
+            if (Response.isError)
+            {
+                return BadRequest(Response);
+            }
+            return Ok(Response);
+        }
+
+
+        [HttpGet("ShowOrders")]
+        public async Task<IActionResult> ShowOrderDetails( string orderId)
+        {
+            var Response = await serviceProviderService.ShowOrderDetails(orderId);
+
+            if (Response.isError)
+            {
+                return BadRequest(Response);
+            }
+            return Ok(Response);
+        }
+
+        [HttpGet("GetProviders")]
+        public async Task<IActionResult> GetAllServiceProviders()
+        {
+            var Response = await serviceProviderService.GetAllServiceProviders();
+
+            if (Response.isError)
+            {
+                return BadRequest(Response);
+            }
+            return Ok(Response);
+        }
+
 
     }
 

@@ -8,7 +8,7 @@ namespace WebApplication1.Services
     {
         Task<Response<string>> Register(User user, string role, string password);
 
-        Task<Response<string>> Login(LoginRequestDto loginRequestDto);
+        Task<Response<Object>> Login(LoginRequestDto loginRequestDto);
     }
     
 }

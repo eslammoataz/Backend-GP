@@ -190,15 +190,12 @@ namespace WebApplication1.Migrations
 
                     b.Property<string>("CustomerID")
                         .IsRequired()
-                        .HasColumnType("varchar(255)");
+                        .HasColumnType("longtext");
 
                     b.Property<DateTime?>("LastChangeTime")
                         .HasColumnType("datetime(6)");
 
                     b.HasKey("CartID");
-
-                    b.HasIndex("CustomerID")
-                        .IsUnique();
 
                     b.ToTable("Carts");
                 });
@@ -301,6 +298,9 @@ namespace WebApplication1.Migrations
 
                     b.Property<string>("ServiceID")
                         .HasColumnType("varchar(255)");
+
+                    b.Property<decimal>("Price")
+                        .HasColumnType("decimal(65,30)");
 
                     b.HasKey("ProviderID", "ServiceID");
 
@@ -509,7 +509,10 @@ namespace WebApplication1.Migrations
                         .HasColumnType("longtext");
 
                     b.Property<string>("CartID")
-                        .HasColumnType("longtext");
+                        .HasColumnType("varchar(255)");
+
+                    b.HasIndex("CartID")
+                        .IsUnique();
 
                     b.ToTable("Customers", (string)null);
                 });
@@ -623,17 +626,6 @@ namespace WebApplication1.Migrations
                     b.Navigation("Criteria");
 
                     b.Navigation("ParentService");
-                });
-
-            modelBuilder.Entity("WebApplication1.Models.Entities.Cart", b =>
-                {
-                    b.HasOne("WebApplication1.Models.Entities.Users.Customer", "Customer")
-                        .WithOne("Cart")
-                        .HasForeignKey("WebApplication1.Models.Entities.Cart", "CustomerID")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("Customer");
                 });
 
             modelBuilder.Entity("WebApplication1.Models.Entities.Order", b =>
@@ -754,11 +746,17 @@ namespace WebApplication1.Migrations
 
             modelBuilder.Entity("WebApplication1.Models.Entities.Users.Customer", b =>
                 {
+                    b.HasOne("WebApplication1.Models.Entities.Cart", "Cart")
+                        .WithOne("Customer")
+                        .HasForeignKey("WebApplication1.Models.Entities.Users.Customer", "CartID");
+
                     b.HasOne("WebApplication1.Models.Entities.Users.User", null)
                         .WithOne()
                         .HasForeignKey("WebApplication1.Models.Entities.Users.Customer", "Id")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
+
+                    b.Navigation("Cart");
                 });
 
             modelBuilder.Entity("WebApplication1.Models.Entities.Users.ServiceProviders.Provider", b =>
@@ -808,6 +806,9 @@ namespace WebApplication1.Migrations
 
             modelBuilder.Entity("WebApplication1.Models.Entities.Cart", b =>
                 {
+                    b.Navigation("Customer")
+                        .IsRequired();
+
                     b.Navigation("ServiceRequests");
                 });
 
@@ -828,8 +829,6 @@ namespace WebApplication1.Migrations
 
             modelBuilder.Entity("WebApplication1.Models.Entities.Users.Customer", b =>
                 {
-                    b.Navigation("Cart");
-
                     b.Navigation("Orders");
                 });
 

@@ -14,6 +14,8 @@ public class Order
 
     public decimal? TotalPrice { get; set; }
 
+    //public DateTime? OrderDate { get; set; }
+
     [ForeignKey("CustomerID")]
     public Customer Customer { get; set; }
 

@@ -114,14 +114,14 @@ namespace WebApplication1.Services
         }
 
 
-        public async Task<Response<string>> Login(LoginRequestDto loginRequestDto)
+        public async Task<Response<object>> Login(LoginRequestDto loginRequestDto)
         {
 
             var user = await userManager.FindByEmailAsync(loginRequestDto.Email);
 
             var isValidPassword = await userManager.CheckPasswordAsync(user, loginRequestDto.password);
             
-            var response = new Response<string>();
+            var response = new Response<object>();
 
             if (user == null || !isValidPassword)
             {
@@ -129,7 +129,7 @@ namespace WebApplication1.Services
                 response.Errors.Add("Invalid Credentials");
                 return response;
             }
-
+            var roles = await userManager.GetRolesAsync(user);
             List<Claim> claims = new()
             {
                   new Claim("userId", user.Id)
@@ -149,10 +149,16 @@ namespace WebApplication1.Services
                 Expires = DateTime.Now.AddMinutes(120) // Set the cookie expiration time
             });
 
+            var payload = new
+            {
+                tokenString = tokenString,
+                Id=user.Id,
+                role = roles.FirstOrDefault(),
 
+        };
             
             response.Message = "User logged in Successfully";
-            response.Payload = tokenString;
+            response.Payload = payload;
             return response;
         }
     }

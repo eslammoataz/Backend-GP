@@ -70,9 +70,9 @@ namespace WebApplication1.Controllers.UsersControllers
         [HttpPost]
         [Route("registerService")]
 
-        public async Task<IActionResult> registerService(string workerId, string serviceId)
+        public async Task<IActionResult> registerService(string workerId, string serviceId, decimal Price)
         {
-            var response = await workerServices.RegisterService(workerId, serviceId);
+            var response = await workerServices.RegisterService( workerId, serviceId, Price);
 
             if (response.isError)
                 return BadRequest(response);

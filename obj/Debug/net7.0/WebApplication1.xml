@@ -10,16 +10,16 @@
             </summary>
             <remarks>Returns a list of all services.</remarks>
         </member>
-        <member name="T:WebApplication1.Migrations.intial">
+        <member name="T:WebApplication1.Migrations.update">
             <inheritdoc />
         </member>
-        <member name="M:WebApplication1.Migrations.intial.Up(Microsoft.EntityFrameworkCore.Migrations.MigrationBuilder)">
+        <member name="M:WebApplication1.Migrations.update.Up(Microsoft.EntityFrameworkCore.Migrations.MigrationBuilder)">
             <inheritdoc />
         </member>
-        <member name="M:WebApplication1.Migrations.intial.Down(Microsoft.EntityFrameworkCore.Migrations.MigrationBuilder)">
+        <member name="M:WebApplication1.Migrations.update.Down(Microsoft.EntityFrameworkCore.Migrations.MigrationBuilder)">
             <inheritdoc />
         </member>
-        <member name="M:WebApplication1.Migrations.intial.BuildTargetModel(Microsoft.EntityFrameworkCore.ModelBuilder)">
+        <member name="M:WebApplication1.Migrations.update.BuildTargetModel(Microsoft.EntityFrameworkCore.ModelBuilder)">
             <inheritdoc />
         </member>
     </members>

@@ -1,5 +1,6 @@
 ﻿using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
+using System.Reflection.Emit;
 using WebApplication1.Models.Entities;
 using WebApplication1.Models.Entities.Users;
 
@@ -169,9 +170,9 @@ namespace WebApplication1.Data
                 .HasForeignKey(c => c.CartID);
 
             builder.Entity<Customer>()
-           .HasOne(c => c.Cart)
-           .WithOne(cart => cart.Customer)
-           .HasForeignKey<Cart>(cart => cart.CustomerID);
+                   .HasOne(c => c.Cart)
+                   .WithOne(c => c.Customer)
+                   .HasForeignKey<Customer>(c => c.CartID);
 
         }
 

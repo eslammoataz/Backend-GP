@@ -2,10 +2,6 @@
 {
     public class Customer : User
     {
-        public Customer()
-        {
-            Cart = new Cart();
-        }
 
         public string Address { get; set; }
         public string? CartID { get; set; }

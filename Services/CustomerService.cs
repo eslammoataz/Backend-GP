@@ -1,5 +1,6 @@
 ﻿using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
+using System;
 using WebApplication1.Data;
 using WebApplication1.Models;
 using WebApplication1.Models.Entities;
@@ -47,7 +48,11 @@ namespace WebApplication1.Services
                 return new Response<string> { isError = true, Message = "There is no Worker in this Service Not Found" };
             }
 
-            var customer = context.Customers.FirstOrDefault(c => c.Id == customerId);
+            var customer = context.Customers
+            .Include(c => c.Cart)
+            .ThenInclude(c => c.ServiceRequests)
+            .FirstOrDefault(c => c.Id == customerId);
+
             if (customer == null)
             {
                 return new Response<string> { isError = true, Message = "Customer Not Found" };
@@ -63,35 +68,44 @@ namespace WebApplication1.Services
             foreach (var slot in slots)
             {
 
-                if (scheduledHour >= slot.StartTime && scheduledHour <= slot.EndTime && slot.enable == true)
+                if (scheduledHour >= slot.StartTime && scheduledHour.Add(TimeSpan.FromHours(1)) <= slot.EndTime && slot.enable == true)
                 {
                     var providerAvailability = provider.Availabilities.FirstOrDefault(p => p.ServiceProviderID == provider.Id);
-
-
-                    //m7tagen showaia validation
                     var Firstslot = new TimeSlot
                     {
-
-                        StartTime = slot.StartTime,
-                        EndTime = scheduledHour.Subtract(TimeSpan.FromHours(0.5)),
                         enable = true,
                         ProviderAvailabilityID = providerAvailability.ProviderAvailabilityID,
                         ProviderAvailability = providerAvailability
                     };
+                            
+                    var Secondslot = new TimeSlot {
 
-                    var Secondslot = new TimeSlot
+                        enable = true,
+                        ProviderAvailabilityID = providerAvailability.ProviderAvailabilityID,
+                        ProviderAvailability = providerAvailability
+
+                    };
+
+                    if (slot.StartTime == scheduledHour)
                     {
+                       
+                        Secondslot.StartTime = scheduledHour.Add(TimeSpan.FromHours(1));
+                        Secondslot.EndTime = slot.EndTime;
+                        providerAvailability.Slots.Add(Secondslot);
 
-                        StartTime = scheduledHour.Add(TimeSpan.FromHours(1.5)),
-                        EndTime = slot.EndTime,
-                        enable = true,
-                        ProviderAvailabilityID = providerAvailability.ProviderAvailabilityID,
-                        ProviderAvailability = providerAvailability
-                    };
+                    }
+                    
+                    else {
+                        Firstslot.StartTime = slot.StartTime;
+                        Firstslot.EndTime = scheduledHour.Subtract(TimeSpan.FromHours(0.5));
+                       
+                        Secondslot.StartTime = scheduledHour.Add(TimeSpan.FromHours(1.5));
+                        Secondslot.EndTime = slot.EndTime;
 
-                    providerAvailability.Slots.Add(Firstslot);
-                    providerAvailability.Slots.Add(Secondslot);
-
+                        providerAvailability.Slots.Add(Firstslot);
+                        providerAvailability.Slots.Add(Secondslot);
+                    }
+        
                     slot.enable = false;
 
 
@@ -106,38 +120,34 @@ namespace WebApplication1.Services
                 }
             }
 
-            var Cart = new Cart();
-
             var newRequest = new ServiceRequest
             {
                 AddedTime = DateTime.Now,
                 providerService = workerService
             };
 
-
-            if (!string.IsNullOrEmpty(customer.CartID))
+            if (customer.Cart == null)
             {
-                Cart = context.Carts.FirstOrDefault(c => c.CartID == customer.CartID);
-                Cart.LastChangeTime = DateTime.Now;
+                var Cart = new Cart
+                {
+                    Customer = customer,
+                    CustomerID = customer.Id,
+                    LastChangeTime = DateTime.Now
+                };
+                customer.Cart = Cart;
 
             }
             else
             {
-
-                Cart = new Cart
-                {
-
-                    LastChangeTime = DateTime.Now,
-                    CustomerID = customerId,
-                    Customer = customer,
-
-                };
-
+                customer.Cart.CustomerID= customer.Id;
+                customer.Cart.Customer= customer;
+                customer.Cart.LastChangeTime = DateTime.Now;
             }
 
-            newRequest.Cart = Cart;
-            newRequest.CartID = Cart.CartID;
-            Cart.ServiceRequests.Add(newRequest);
+       
+            newRequest.Cart = customer.Cart;
+            newRequest.CartID = customer.Cart.CartID;
+            customer.Cart.ServiceRequests.Add(newRequest);
             context.SaveChanges();
             return new Response<string> { isError = false, Message = "Service Request is added succesfully to the cart" };
 
@@ -176,25 +186,64 @@ namespace WebApplication1.Services
         {
             var customer = context.Customers
                   .Include(c => c.Cart)
-                   .ThenInclude(ca => ca.ServiceRequests)
+                   .ThenInclude(ca => ca.ServiceRequests).
+                   ThenInclude(s=>s.providerService)
                     .FirstOrDefault(p => p.Id == customerId);
             if (customer == null)
             {
                 return new Response<List<object>>() { Payload = null, Message = "Customer is not found" };
             }
 
-            var cart = context.Carts.FirstOrDefault(c => customerId == c.CustomerID);
+            var cart = customer.Cart;
             if (cart == null)
             {
                 return new Response<List<object>>() { Payload = null, Message = "Cart is not found" };
             }
 
-            List<object> response = new List<object>();
 
-            response.Add(customer.Cart.ServiceRequests);
+
+            var response = customer.Cart.ServiceRequests.Select(s => new 
+            {
+                s.AddedTime,
+                s.providerService.ServiceID,
+                s.providerService.ProviderID
+            }).ToList<object>();
+           
 
             return new Response<List<object>>() { Payload = response, Message = "Success" };
         }
 
+        public async Task<Response<string>> OrderService(string customerId)
+        {
+            var customer = context.Customers
+                .Include(c => c.Cart)
+                .ThenInclude(c => c.ServiceRequests)
+                .ThenInclude(s => s.providerService)
+                .FirstOrDefault(c => c.Id == customerId);
+
+            if (customer == null)
+            {
+                return new Response<string> { isError = true, Message = "Customer Not Found" };
+            }
+            
+            var Order = new Order()
+            {
+                Customer = customer,
+                CustomerID = customerId,
+                OrderStatusID = "1", //value (status name)=set
+                OrderStatus=context.OrderStatuses.FirstOrDefault(o=>o.OrderStatusID=="1"),
+            };
+
+            var totalPrice = customer.Cart.ServiceRequests.Sum(s => s.providerService.Price);
+
+            Order.TotalPrice = totalPrice;
+            context.Orders.Add(Order);
+            context.SaveChanges();
+            return new Response<string> { isError = false, Message = "Order is setted sucessfully" };
+
+
+        }
+
     }
+
 }

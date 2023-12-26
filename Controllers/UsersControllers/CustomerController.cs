@@ -68,8 +68,8 @@ namespace WebApplication1.Controllers.UsersControllers
         }
 
         [HttpPost]
-        [Route("requestService")]
-        public async Task<IActionResult> RequestService(RequestServiceDto requestServiceDto, string customerId)
+        [Route("addtocart")]
+        public async Task<IActionResult> AddToCart(RequestServiceDto requestServiceDto, string customerId)
         {
             var Response = await customerService.RequestService(requestServiceDto, customerId);
 
@@ -82,10 +82,24 @@ namespace WebApplication1.Controllers.UsersControllers
         }
 
         [HttpPost]
-        [Route("cancelrequestService")]
-        public async Task<IActionResult> CancelRequestService(string customerId, string requestId)
+        [Route("OrderCart/{customerId}")]
+        public async Task<IActionResult> OrderCart(string customerId)
         {
-            var Response = await customerService.CancelRequestService(customerId, requestId);
+            var Response = await customerService.OrderService(customerId);
+
+            if (Response.isError)
+            {
+                return BadRequest(Response);
+            }
+            return Ok(Response);
+
+        }
+
+        [HttpPost]
+        [Route("removefromCart/{customerId}/{itemId}")]
+        public async Task<IActionResult> CancelRequestService(string customerId, string itemId)
+        {
+            var Response = await customerService.CancelRequestService(customerId, itemId);
 
             if (Response.isError)
             {

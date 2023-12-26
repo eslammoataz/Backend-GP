@@ -4,6 +4,8 @@ using Microsoft.AspNetCore.Identity;
 using WebApplication1.Models.Entities.Users;
 using WebApplication1.Models.Emails;
 using WebApplication1.Services.EmailService;
+using WebApplication1.Models.Entities;
+using WebApplication1.Models.Entities.Users.ServiceProviders;
 
 namespace WebApplication1.Controllers.UsersControllers
 {
@@ -28,6 +30,37 @@ namespace WebApplication1.Controllers.UsersControllers
             logger = _logger;
             emailService = _emailService;
 
+        }
+
+
+        [HttpGet("getCustomers")]
+        public IActionResult GetAllCustomers()
+        {
+            var customers = context.Customers.Select(c => new
+            {
+                c.Id,
+                c.FirstName,
+                c.LastName,
+                c.Address,
+                c.Email,
+                Cart = c.Cart.ServiceRequests.Select(s => new
+                {
+                    s.AddedTime,
+                    Service = s.providerService.Service.ServiceName,
+                    Provider = s.providerService.Provider.FirstName,
+
+
+                }).ToList()
+            }).ToList();
+            if (customers.Any())
+            {
+                return Ok(customers);
+            }
+            else
+            {
+                return BadRequest("No Customers to retrive");
+
+            }
         }
 
         [HttpGet("getRequests")]
@@ -101,6 +134,10 @@ namespace WebApplication1.Controllers.UsersControllers
             return Ok($" Worker Rejected Successfully, Verification Email sent to {provider.Email} ");
 
         }
+
+
+
+
 
     }
 }
