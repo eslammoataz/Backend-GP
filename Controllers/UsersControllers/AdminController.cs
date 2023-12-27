@@ -6,6 +6,7 @@ using WebApplication1.Models.Emails;
 using WebApplication1.Services.EmailService;
 using WebApplication1.Models.Entities;
 using WebApplication1.Models.Entities.Users.ServiceProviders;
+using WebApplication1.Services;
 
 namespace WebApplication1.Controllers.UsersControllers
 {
@@ -13,6 +14,7 @@ namespace WebApplication1.Controllers.UsersControllers
     [ApiController]
     public class AdminController : ControllerBase
     {
+        private readonly IAdminService adminService;
         private readonly AppDbContext context;
         private readonly IConfiguration config;
         private readonly UserManager<User> userManager;
@@ -21,8 +23,9 @@ namespace WebApplication1.Controllers.UsersControllers
         private readonly RoleManager<IdentityRole> roleManager;
 
 
-        public AdminController(AppDbContext _context, UserManager<User> _adminManager, RoleManager<IdentityRole> _roleManager, IConfiguration _config, ILogger<AdminController> _logger, IEmailService _emailService)
+        public AdminController(IAdminService adminService ,AppDbContext _context, UserManager<User> _adminManager, RoleManager<IdentityRole> _roleManager, IConfiguration _config, ILogger<AdminController> _logger, IEmailService _emailService)
         {
+            this.adminService = adminService;
             context = _context;
             userManager = _adminManager;
             roleManager = _roleManager;
@@ -34,34 +37,26 @@ namespace WebApplication1.Controllers.UsersControllers
 
 
         [HttpGet("getCustomers")]
-        public IActionResult GetAllCustomers()
+        public async Task <IActionResult> GetAllCustomers()
         {
-            var customers = context.Customers.Select(c => new
-            {
-                c.Id,
-                c.FirstName,
-                c.LastName,
-                c.Address,
-                c.Email,
-                Cart = c.Cart.ServiceRequests.Select(s => new
-                {
-                    s.AddedTime,
-                    Service = s.providerService.Service.ServiceName,
-                    Provider = s.providerService.Provider.FirstName,
-
-
-                }).ToList()
-            }).ToList();
-            if (customers.Any())
-            {
-                return Ok(customers);
-            }
-            else
-            {
-                return BadRequest("No Customers to retrive");
-
-            }
+            return Ok(await adminService.GetAllCustomers());
         }
+        
+        
+        [HttpGet("getServiceProviders")]
+        public async Task<IActionResult> GetAllServiceProviders()
+        {
+            return Ok(await adminService.GetAllServiceProviders());
+        }
+        
+        
+        [HttpGet("getServices")]
+        public async Task<IActionResult> GetAllServices()
+        {
+            return Ok(await adminService.GetAllServices());
+        }
+
+            
 
         [HttpGet("getRequests")]
         public IActionResult GetRequests()

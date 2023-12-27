@@ -1,8 +1,10 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Http.HttpResults;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using WebApplication1.Data;
 using WebApplication1.Models;
 using WebApplication1.Models.Requests.ServiceRequestsValidation;
+using WebApplication1.Services;
 
 namespace WebApplication1.Controllers
 {
@@ -13,11 +15,14 @@ namespace WebApplication1.Controllers
     {
         private readonly AppDbContext _context;
         private readonly ILogger<ServiceController> logger;
+        private readonly IServicesService servicesService;
 
-        public ServiceController(AppDbContext context, ILogger<ServiceController> logger)
+        public ServiceController(AppDbContext context, ILogger<ServiceController> logger,
+            IServicesService servicesService)
         {
             _context = context;
             this.logger = logger;
+            this.servicesService = servicesService;
         }
 
 
@@ -30,7 +35,6 @@ namespace WebApplication1.Controllers
 
         [HttpPost]
         public IActionResult AddService([FromBody] AddServiceDto serviceDto)
-
         {
             var criteria = _context.Criterias.FirstOrDefault(s => s.CriteriaName == serviceDto.CriteriaName);
 
@@ -110,36 +114,33 @@ namespace WebApplication1.Controllers
             return Ok(service);
         }
 
-        [HttpGet("GetAllServices")]
-        public IActionResult GetAllServices()
+        [HttpGet("GetAllServices/{CriteriaID}")]
+        public async Task<IActionResult> GetAllServices(string CriteriaID)
         {
 
-            var service = _context.Services.Include(s => s.ChildServices).Select(s => new
+            
+            var Response = await servicesService.GetAllServices(CriteriaID);
+
+            if (Response.isError)
             {
-                s.ServiceID,
-                s.ServiceName,
-                s.AvailabilityStatus,
-                Criteria = s.Criteria.CriteriaName,
-                ChildServices = s.ChildServices.Select(cs => new
-                {
-                    cs.ServiceName
-                }).ToList(),
-
-            }).ToList();
-
-
-            if (service.Any())
-            {
-                return Ok(service);
+                return BadRequest(Response);
             }
-            else
-            {
-                return BadRequest("No services to retrive");
 
-            }
+            return Ok(Response);
         }
+        
+        [HttpGet("GetAllWorkers/{serviceId}")]
+        public async Task<IActionResult> GetAllWorkers(string serviceId)
+        {
+            var Response = await servicesService.GetAllWorkers(serviceId);
 
+            if (Response.isError)
+            {
+                return BadRequest(Response);
+            }
 
+            return Ok(Response);
+        }
     }
-}
 
+}

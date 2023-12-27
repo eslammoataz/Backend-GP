@@ -112,6 +112,8 @@ internal class Program
         builder.Services.AddScoped<IEmailService, EmailService>();
         builder.Services.AddScoped<IServiceProviderService, ServiceProviderService>();
         builder.Services.AddScoped<ICustomerService, CustomerService>();
+        builder.Services.AddScoped<IServicesService, ServicesService>();
+        builder.Services.AddScoped<IAdminService, AdminService>();
 
         builder.Services.AddTransient<GlobalExceptionHandlingMiddleware>();
 

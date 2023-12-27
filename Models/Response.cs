@@ -2,6 +2,7 @@
 {
     public class Response<T>
     {
+        public string Status { get; set; }
         public bool isError { get; set; } = false;
 
         public string Message { get; set; } = "";
