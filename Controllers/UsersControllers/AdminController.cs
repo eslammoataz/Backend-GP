@@ -81,24 +81,21 @@ namespace WebApplication1.Controllers.UsersControllers
         public async Task<IActionResult> ApproveServiceProviderRegister(string WorkerID)
         {
 
-            var provider = context.Provider.FirstOrDefault(w => w.Id == WorkerID);
-            if (provider == null)
+            var response = await adminService.ApproveServiceProviderRegister(WorkerID);
+            if(response.isError)
             {
-                return BadRequest("Wrong Worker ID");
+                return NotFound("Not Found");
             }
-
-            provider.isVerified = true;
-            context.SaveChanges();
-
+            
             //Add Token to Verify the email....
-            var token = await userManager.GenerateEmailConfirmationTokenAsync(provider);
+            var token = await userManager.GenerateEmailConfirmationTokenAsync(response.Payload);
 
-            logger.LogInformation(provider.Email);
+            logger.LogInformation(response.Payload.Email);
 
-            var message = new EmailDto(provider.Email!, "Sarvicny: Worker Approved Successfully", "Congratulations you are accepted");
+            var message = new EmailDto(response.Payload.Email!, "Sarvicny: Worker Approved Successfully", "Congratulations you are accepted");
 
             emailService.SendEmail(message);
-            return Ok($"Worker Approved Successfully , Verification Email sent to {provider.Email} ");
+            return Ok($"Worker Approved Successfully , Verification Email sent to {response.Payload.Email} ");
 
         }
 

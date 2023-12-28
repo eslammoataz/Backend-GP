@@ -3,6 +3,7 @@ using Microsoft.EntityFrameworkCore;
 using WebApplication1.Data;
 using WebApplication1.Models;
 using WebApplication1.Models.Entities.Users;
+using WebApplication1.Models.Entities.Users.ServiceProviders;
 
 namespace WebApplication1.Services;
 
@@ -70,4 +71,29 @@ public class AdminService :IAdminService
             Payload = services
         };
     }
+
+    public async Task<Response<Provider>> ApproveServiceProviderRegister(string WorkerID)
+    {
+
+        var provider = context.Provider.FirstOrDefault(w => w.Id == WorkerID);
+        if (provider == null)
+        {
+            return new Response<Provider>()
+            {
+                Status = "faild",
+                isError = true,
+                Message = "NotFound",
+                Payload = null
+            };
+        }
+        
+            provider.isVerified = true;
+            context.SaveChanges();
+            return new Response<Provider>()
+            {
+                Status = "Success",
+                Message = "Action Done Successfully",
+                Payload = provider
+            };
+        } 
 }
