@@ -11541,24 +11541,19 @@
     ]
   },
   "packageFolders": {
-    "C:\\Users\\Menna\\.nuget\\packages\\": {},
-    "C:\\Program Files (x86)\\Microsoft Visual Studio\\Shared\\NuGetPackages": {}
+    "C:\\Users\\Nemox\\.nuget\\packages\\": {}
   },
   "project": {
     "version": "1.0.0",
     "restore": {
-      "projectUniqueName": "D:\\Graduation Project\\Backend-GP\\WebApplication1.csproj",
+      "projectUniqueName": "E:\\Github Repos\\Backend-GP\\WebApplication1.csproj",
       "projectName": "WebApplication1",
-      "projectPath": "D:\\Graduation Project\\Backend-GP\\WebApplication1.csproj",
-      "packagesPath": "C:\\Users\\Menna\\.nuget\\packages\\",
-      "outputPath": "D:\\Graduation Project\\Backend-GP\\obj\\",
+      "projectPath": "E:\\Github Repos\\Backend-GP\\WebApplication1.csproj",
+      "packagesPath": "C:\\Users\\Nemox\\.nuget\\packages\\",
+      "outputPath": "E:\\Github Repos\\Backend-GP\\obj\\",
       "projectStyle": "PackageReference",
-      "fallbackFolders": [
-        "C:\\Program Files (x86)\\Microsoft Visual Studio\\Shared\\NuGetPackages"
-      ],
       "configFilePaths": [
-        "C:\\Users\\Menna\\AppData\\Roaming\\NuGet\\NuGet.Config",
-        "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.FallbackLocation.config",
+        "C:\\Users\\Nemox\\AppData\\Roaming\\NuGet\\NuGet.Config",
         "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.Offline.config"
       ],
       "originalTargetFrameworks": [
@@ -11656,7 +11651,7 @@
             "privateAssets": "all"
           }
         },
-        "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\8.0.100\\RuntimeIdentifierGraph.json"
+        "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\7.0.403\\RuntimeIdentifierGraph.json"
       }
     }
   }

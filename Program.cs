@@ -77,18 +77,20 @@ internal class Program
         //Jwt configuration ends here
 
         // allowing CORS
-        builder.Services.AddCors(feature =>
-            feature.AddPolicy(
-                "CorsPolicy",
-                apiPolicy => apiPolicy
-                    //.AllowAnyOrigin()
-                    .WithOrigins("http://localhost:3000")
-                    .AllowAnyHeader()
-                    .AllowAnyMethod()
-                    // .SetIsOriginAllowed(host => true)
-                    .AllowCredentials()
-                    .WithExposedHeaders()
-            ));
+        builder.Services.AddCors(options =>
+        {
+            options.AddPolicy("CorsPolicy",
+                builder =>
+                {
+                    builder.WithOrigins("http://localhost:3000")
+                        .AllowAnyHeader()
+                        .AllowAnyMethod()
+                        .AllowCredentials()
+                        .WithExposedHeaders("x-Authorization") // Expose custom headers if needed
+                        .SetIsOriginAllowed(_ => true)
+                    .WithHeaders("Content-Type"); // Allow Content-Type header
+                });
+        });
 
 
 
